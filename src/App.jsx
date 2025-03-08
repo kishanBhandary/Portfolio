@@ -1,16 +1,12 @@
-/* eslint-disable no-unused-vars */
-import { useState } from 'react'
-import './App.css'
+import BackgroundMusic from "./BackgroundMusic";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-    <div class="neon-effect"></div>
-    
-    </>
-  )
+    <div>
+      <BackgroundMusic />
+      {/* Your other components */}
+    </div>
+  );
 }
 
-export default App
+export default App;
