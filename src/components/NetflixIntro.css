@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap");
+
+.neon-text {
+  font-family: "Orbitron", sans-serif;
+  font-size: 4rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0080ff, 0 0 80px #0080ff;
+  animation: flicker 1.5s infinite alternate;
+}
+
+@media (min-width: 640px) {
+  .neon-text {
+    font-size: 6rem;
+  }
+}
+
+.neon-line {
+  height: 2px;
+  background-color: #0ff;
+  box-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0080ff, 0 0 40px #0080ff;
+}
+
+@keyframes flicker {
+  0%,
+  19%,
+  21%,
+  23%,
+  25%,
+  54%,
+  56%,
+  100% {
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0080ff, 0 0 80px #0080ff;
+  }
+  20%,
+  24%,
+  55% {
+    text-shadow: none;
+  }
+}
+

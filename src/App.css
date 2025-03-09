@@ -17,7 +17,7 @@
   color: red;
   opacity: 0;
   transform: translateY(-20px);
-  animation: fadeInUp 1s forwards;
+  animation:ease-in-out;
 }
 
 @keyframes fadeInUp {
