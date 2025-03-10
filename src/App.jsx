@@ -35,11 +35,11 @@ function App() {
       )}
 
       {userInteracted && (
-        <BackgroundMusic introSrc="/bgmusic.mp3" mainSrc="/bgmusic.mp3" isIntroComplete={introComplete} />
+        <BackgroundMusic introSrc="/intro-music.mp3" mainSrc="/main-music.mp3" isIntroComplete={introComplete} />
       )}
 
       {!userInteracted && (
-        <div className="fixed bottom-4 left-0 right-0 text-center text-white bg-black/80 p-2 rounded-md mx-auto max-w-xs">
+        <div className="fixed bottom-4 left-0 right-0 text-center text-white bg-black/80 p-2 rounded-md mx-auto max-w-xs z-50">
           Click anywhere to enable sound
         </div>
       )}
