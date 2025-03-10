@@ -6,7 +6,9 @@
   font-weight: bold;
   color: #fff;
   text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0080ff, 0 0 80px #0080ff;
-  animation: flicker 1.5s infinite alternate;
+  animation: flicker 3s infinite alternate;
+  position: relative;
+  display: inline-block;
 }
 
 @media (min-width: 640px) {
@@ -16,9 +18,10 @@
 }
 
 .neon-line {
-  height: 2px;
+  height: 3px;
   background-color: #0ff;
   box-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0080ff, 0 0 40px #0080ff;
+  animation: pulse 1.5s infinite alternate;
 }
 
 @keyframes flicker {
@@ -36,6 +39,81 @@
   24%,
   55% {
     text-shadow: none;
+  }
+}
+
+@keyframes pulse {
+  from {
+    opacity: 1;
+    box-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0080ff, 0 0 40px #0080ff;
+  }
+  to {
+    opacity: 0.8;
+    box-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0080ff, 0 0 80px #0080ff;
+  }
+}
+
+/* Add glitch effect */
+.neon-text::before,
+.neon-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.neon-text::before {
+  animation: glitch-1 2s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  text-shadow: -2px 0 #ff00de;
+}
+
+.neon-text::after {
+  animation: glitch-2 3s infinite;
+  clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+  text-shadow: 2px 0 #00ffff;
+}
+
+@keyframes glitch-1 {
+  0%,
+  5%,
+  10%,
+  100% {
+    transform: none;
+    opacity: 0;
+  }
+  1%,
+  9% {
+    transform: translate(-2px, 0);
+    opacity: 0.3;
+  }
+  2%,
+  8% {
+    transform: translate(2px, 0);
+    opacity: 0.3;
+  }
+}
+
+@keyframes glitch-2 {
+  0%,
+  15%,
+  20%,
+  100% {
+    transform: none;
+    opacity: 0;
+  }
+  11%,
+  19% {
+    transform: translate(-1px, 0);
+    opacity: 0.3;
+  }
+  12%,
+  18% {
+    transform: translate(1px, 0);
+    opacity: 0.3;
   }
 }
 

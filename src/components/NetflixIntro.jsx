@@ -1,42 +1,76 @@
+/* eslint-disable no-unused-vars */
 "use client"
 
 import { useState, useEffect } from "react"
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion"
 import "./NetflixIntro.css"
 
 export default function NetflixIntro({ name, onComplete }) {
-  const [visibleLetters, setVisibleLetters] = useState(0)
   const [showIntro, setShowIntro] = useState(true)
+  const [animationComplete, setAnimationComplete] = useState(false)
 
   useEffect(() => {
-    // Start the letter animation after a short delay
-    const startDelay = setTimeout(() => {
-      const letterInterval = setInterval(() => {
-        setVisibleLetters((prev) => {
-          if (prev < name.length) {
-            return prev + 1
-          } else {
-            clearInterval(letterInterval)
+    // After animation completes, wait and then fade out
+    if (animationComplete) {
+      const timeout = setTimeout(() => {
+        setShowIntro(false)
 
-            // After all letters are shown, wait and then fade out
-            setTimeout(() => {
-              setShowIntro(false)
+        // After fade out animation completes, call onComplete
+        setTimeout(onComplete, 1000)
+      }, 2000)
 
-              // After fade out animation completes, call onComplete
-              setTimeout(onComplete, 1000)
-            }, 2000)
+      return () => clearTimeout(timeout)
+    }
+  }, [animationComplete, onComplete])
 
-            return prev
-          }
-        })
-      }, 150) // Time between each letter appearing
+  // Calculate when all letters have finished animating
+  const handleAnimationComplete = (index) => {
+    if (index === name.length - 1) {
+      setAnimationComplete(true)
+    }
+  }
 
-      return () => clearInterval(letterInterval)
-    }, 1000)
+  // Generate random values for each letter's animation
+  const getRandomDirection = () => {
+    const directions = ["top", "bottom", "left", "right"]
+    return directions[Math.floor(Math.random() * directions.length)]
+  }
 
-    return () => clearTimeout(startDelay)
-  }, [name, onComplete])
+  // Create animation variants based on random direction
+  const createVariants = (direction) => {
+    const offScreen = {
+      top: { y: "-100vh", x: 0, rotate: -10, opacity: 0 },
+      bottom: { y: "100vh", x: 0, rotate: 10, opacity: 0 },
+      left: { x: "-100vw", y: 0, rotate: -10, opacity: 0 },
+      right: { x: "100vw", y: 0, rotate: 10, opacity: 0 },
+    }
+
+    return {
+      initial: offScreen[direction],
+      animate: {
+        x: 0,
+        y: 0,
+        rotate: 0,
+        opacity: 1,
+        filter: [
+          "blur(10px) brightness(2)",
+          "blur(0px) brightness(1.5)",
+          "blur(4px) brightness(2)",
+          "blur(0px) brightness(1.5)",
+        ],
+      },
+      transition: {
+        type: "spring",
+        damping: 12,
+        duration: 0.8,
+        delay: Math.random() * 0.5,
+        filter: {
+          times: [0, 0.3, 0.4, 1],
+          duration: 0.8,
+        },
+      },
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -49,25 +83,34 @@ export default function NetflixIntro({ name, onComplete }) {
           transition={{ duration: 1 }}
         >
           <div className="relative">
-            <div className="flex">
-              {name.split("").map((letter, index) => (
-                <motion.div
-                  key={index}
-                  className={`neon-text ${letter === " " ? "w-6 sm:w-10" : ""}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={index < visibleLetters ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {letter}
-                </motion.div>
-              ))}
+            <div className="flex flex-wrap justify-center max-w-4xl">
+              {name.split("").map((letter, index) => {
+                const direction = getRandomDirection()
+                const { initial, animate, transition } = createVariants(direction)
+
+                return (
+                  <motion.div
+                    key={index}
+                    className={`neon-text ${letter === " " ? "w-6 sm:w-10" : ""} m-1`}
+                    initial={initial}
+                    animate={animate}
+                    transition={{
+                      ...transition,
+                      delay: index * 0.1, // Sequential timing
+                    }}
+                    onAnimationComplete={() => handleAnimationComplete(index)}
+                  >
+                    {letter}
+                  </motion.div>
+                )
+              })}
             </div>
-            <div
-              className="absolute bottom-0 left-0 right-0 h-1 neon-line"
-              style={{
-                width: `${(visibleLetters / name.length) * 100}%`,
-                transition: "width 0.15s linear",
-              }}
+
+            <motion.div
+              className="mt-8 h-1 neon-line"
+              initial={{ width: 0 }}
+              animate={{ width: animationComplete ? "100%" : "0%" }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
             />
           </div>
         </motion.div>
