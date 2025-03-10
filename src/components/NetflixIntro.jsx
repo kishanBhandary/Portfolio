@@ -32,10 +32,10 @@ export default function NetflixIntro({ name, onComplete }) {
     const animateBackground = async () => {
       await backgroundControls.start({
         background: [
-          "radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,30,60,0.5) 100%)",
-          "radial-gradient(circle at 30% 70%, rgba(0,0,0,1) 0%, rgba(0,60,120,0.5) 100%)",
-          "radial-gradient(circle at 70% 30%, rgba(0,0,0,1) 0%, rgba(0,30,60,0.5) 100%)",
-          "radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,30,60,0.5) 100%)",
+          "radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0%, rgba(30,0,50,0.5) 100%)",
+          "radial-gradient(circle at 30% 70%, rgba(0,0,0,1) 0%, rgba(60,0,100,0.5) 100%)",
+          "radial-gradient(circle at 70% 30%, rgba(0,0,0,1) 0%, rgba(30,0,50,0.5) 100%)",
+          "radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0%, rgba(30,0,50,0.5) 100%)",
         ],
         transition: {
           duration: 15,
@@ -117,9 +117,9 @@ export default function NetflixIntro({ name, onComplete }) {
       y: -10,
       scale: 1.1,
       textShadow: [
-        "0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0080ff, 0 0 80px #0080ff",
-        "0 0 7px #f0f, 0 0 14px #f0f, 0 0 28px #f0f, 0 0 56px #f08, 0 0 112px #f08",
-        "0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0080ff, 0 0 80px #0080ff",
+        "0 0 5px #b829ff, 0 0 10px #b829ff, 0 0 20px #b829ff, 0 0 40px #7000ff, 0 0 80px #7000ff",
+        "0 0 7px #ffcc00, 0 0 14px #ffcc00, 0 0 28px #ffcc00, 0 0 56px #ff9900, 0 0 112px #ff9900",
+        "0 0 5px #b829ff, 0 0 10px #b829ff, 0 0 20px #b829ff, 0 0 40px #7000ff, 0 0 80px #7000ff",
       ],
       transition: {
         type: "spring",
