@@ -54,8 +54,85 @@
   align-items: center;
   justify-content: center;
   z-index: 1;
+  width: 100%;
+  height: 100%;
 }
 
+/* Logo animation styles */
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.logo {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #b829ff, #7000ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 10px #b829ff, 0 0 20px #7000ff, 0 0 40px rgba(112, 0, 255, 0.5);
+  animation: pulse-logo 2s infinite alternate;
+}
+
+.logo-inner {
+  font-family: "Orbitron", sans-serif;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.logo-text {
+  font-family: "Rajdhani", sans-serif;
+  font-size: 1.5rem;
+  color: #fff;
+  margin-top: 1.5rem;
+  letter-spacing: 8px;
+  text-shadow: 0 0 10px rgba(184, 41, 255, 0.8);
+}
+
+.beam {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, #b829ff, #ffcc00, transparent);
+  transform-origin: center;
+}
+
+.beam-horizontal {
+  height: 2px;
+  width: 100%;
+  max-width: 500px;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.beam-vertical {
+  width: 2px;
+  height: 100%;
+  max-height: 500px;
+  left: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes pulse-logo {
+  0% {
+    box-shadow: 0 0 10px #b829ff, 0 0 20px #7000ff, 0 0 40px rgba(112, 0, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 15px #b829ff, 0 0 30px #7000ff, 0 0 60px rgba(112, 0, 255, 0.7);
+  }
+}
+
+/* Letter animation styles */
 .name-container {
   display: flex;
   flex-wrap: wrap;
@@ -180,6 +257,19 @@
 
   .intro-message {
     font-size: 1rem;
+  }
+
+  .logo {
+    width: 120px;
+    height: 120px;
+  }
+
+  .logo-inner {
+    font-size: 2.5rem;
+  }
+
+  .logo-text {
+    font-size: 1.2rem;
   }
 }
 

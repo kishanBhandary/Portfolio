@@ -4,9 +4,12 @@ import { useState, useEffect } from "react"
 import NetflixIntro from "./components/NetflixIntro"
 import BackgroundMusic from "./components/BackgroundMusic"
 import MainContent from "./components/MainContent"
+import TransitionAnimation from "./components/TransitionAnimation"
 
 function App() {
   const [introComplete, setIntroComplete] = useState(false)
+  const [showTransition, setShowTransition] = useState(false)
+  const [showMainContent, setShowMainContent] = useState(false)
   const [userInteracted, setUserInteracted] = useState(false)
 
   // Handle user interaction to enable audio
@@ -26,16 +29,28 @@ function App() {
     }
   }, [])
 
+  // Handle intro completion
+  const handleIntroComplete = () => {
+    setIntroComplete(true)
+    setShowTransition(true)
+  }
+
+  // Handle transition completion
+  const handleTransitionComplete = () => {
+    setShowTransition(false)
+    setShowMainContent(true)
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-black" onClick={handleUserInteraction}>
-      {!introComplete ? (
-        <NetflixIntro name="KISHAN BHANDARY" onComplete={() => setIntroComplete(true)} />
-      ) : (
-        <MainContent />
-      )}
+      {!introComplete && <NetflixIntro name="KISHAN BHANDARY" onComplete={handleIntroComplete} />}
+
+      {showTransition && <TransitionAnimation onComplete={handleTransitionComplete} />}
+
+      {showMainContent && <MainContent />}
 
       {userInteracted && (
-        <BackgroundMusic introSrc="/intro-music.mp3" mainSrc="/main-music.mp3" isIntroComplete={introComplete} />
+        <BackgroundMusic introSrc="/intro-music.mp3" mainSrc="/main-music.mp3" isIntroComplete={showMainContent} />
       )}
 
       {!userInteracted && (

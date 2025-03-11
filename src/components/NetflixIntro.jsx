@@ -7,6 +7,8 @@ import "./NetflixIntro.css"
 
 export default function NetflixIntro({ name, onComplete }) {
   const [showIntro, setShowIntro] = useState(true)
+  const [showPreAnimation, setShowPreAnimation] = useState(true)
+  const [showLetterAnimation, setShowLetterAnimation] = useState(false)
   const [animationComplete, setAnimationComplete] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const containerRef = useRef(null)
@@ -48,6 +50,18 @@ export default function NetflixIntro({ name, onComplete }) {
 
     animateBackground()
   }, [backgroundControls])
+
+  // Pre-animation sequence
+  useEffect(() => {
+    if (showPreAnimation) {
+      const timer = setTimeout(() => {
+        setShowPreAnimation(false)
+        setShowLetterAnimation(true)
+      }, 3000) // Show pre-animation for 3 seconds
+
+      return () => clearTimeout(timer)
+    }
+  }, [showPreAnimation])
 
   // Handle completion of animation
   useEffect(() => {
@@ -134,6 +148,46 @@ export default function NetflixIntro({ name, onComplete }) {
     },
   }
 
+  // Logo animation variants
+  const logoVariants = {
+    initial: {
+      scale: 0,
+      opacity: 0,
+      rotate: -180,
+    },
+    animate: {
+      scale: [0, 1.2, 1],
+      opacity: 1,
+      rotate: 0,
+      transition: {
+        duration: 1.5,
+        times: [0, 0.7, 1],
+        ease: "easeOut",
+      },
+    },
+    exit: {
+      scale: [1, 1.5, 0],
+      opacity: [1, 1, 0],
+      transition: {
+        duration: 0.8,
+      },
+    },
+  }
+
+  // Energy beam variants
+  const beamVariants = {
+    initial: { scaleX: 0, opacity: 0 },
+    animate: {
+      scaleX: [0, 1, 1, 0],
+      opacity: [0, 0.8, 0.8, 0],
+      transition: {
+        duration: 2,
+        times: [0, 0.3, 0.7, 1],
+        ease: "easeInOut",
+      },
+    },
+  }
+
   return (
     <AnimatePresence>
       {showIntro && (
@@ -150,55 +204,110 @@ export default function NetflixIntro({ name, onComplete }) {
           {particles}
 
           <div className="intro-content">
-            <motion.div
-              className="name-container"
-              style={{
-                perspective: 1000,
-                transform: `rotateY(${mousePosition.x}deg) rotateX(${-mousePosition.y}deg)`,
-              }}
-            >
-              {name.split("").map((letter, index) => (
+            {/* Pre-animation: Logo reveal */}
+            <AnimatePresence>
+              {showPreAnimation && (
                 <motion.div
-                  key={index}
-                  className={`neon-text ${letter === " " ? "w-6 sm:w-10" : ""}`}
-                  custom={index}
-                  variants={letterVariants}
+                  className="logo-container"
+                  variants={logoVariants}
                   initial="initial"
                   animate="animate"
-                  whileHover="hover"
-                  onAnimationComplete={index === name.length - 1 ? handleFinalLetterComplete : undefined}
-                  data-text={letter}
+                  exit="exit"
                 >
-                  {letter}
+                  <div className="logo">
+                    <div className="logo-inner">KB</div>
+                  </div>
+
+                  {/* Animated beams */}
+                  <motion.div
+                    className="beam beam-horizontal"
+                    variants={beamVariants}
+                    initial="initial"
+                    animate="animate"
+                    transition={{ delay: 0.5, repeatDelay: 0.5, repeat: 2 }}
+                  />
+                  <motion.div
+                    className="beam beam-vertical"
+                    variants={beamVariants}
+                    initial="initial"
+                    animate="animate"
+                    transition={{ delay: 0.7, repeatDelay: 0.5, repeat: 2 }}
+                  />
+
+                  <motion.div
+                    className="logo-text"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1, duration: 0.5 }}
+                  >
+                    PRESENTS
+                  </motion.div>
                 </motion.div>
-              ))}
-            </motion.div>
+              )}
+            </AnimatePresence>
 
-            <motion.div
-              className="progress-container"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: animationComplete ? 1 : 0 }}
-              transition={{ duration: 0.5 }}
-            >
+            {/* Main letter animation */}
+            <AnimatePresence>
+              {showLetterAnimation && (
+                <motion.div
+                  className="name-container"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  style={{
+                    perspective: 1000,
+                    transform: `rotateY(${mousePosition.x}deg) rotateX(${-mousePosition.y}deg)`,
+                  }}
+                >
+                  {name.split("").map((letter, index) => (
+                    <motion.div
+                      key={index}
+                      className={`neon-text ${letter === " " ? "w-6 sm:w-10" : ""}`}
+                      custom={index}
+                      variants={letterVariants}
+                      initial="initial"
+                      animate="animate"
+                      whileHover="hover"
+                      onAnimationComplete={index === name.length - 1 ? handleFinalLetterComplete : undefined}
+                      data-text={letter}
+                    >
+                      {letter}
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Progress bar */}
+            {showLetterAnimation && (
               <motion.div
-                className="neon-line"
-                initial={{ width: 0 }}
-                animate={{ width: animationComplete ? "100%" : "0%" }}
-                transition={{ duration: 1.5, ease: "easeInOut" }}
-              />
-            </motion.div>
+                className="progress-container"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: animationComplete ? 1 : 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <motion.div
+                  className="neon-line"
+                  initial={{ width: 0 }}
+                  animate={{ width: animationComplete ? "100%" : "0%" }}
+                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                />
+              </motion.div>
+            )}
 
-            <motion.div
-              className="intro-message"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{
-                opacity: animationComplete ? 1 : 0,
-                y: animationComplete ? 0 : 20,
-              }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-            >
-              <span>Welcome to the experience</span>
-            </motion.div>
+            {/* Welcome message */}
+            {showLetterAnimation && (
+              <motion.div
+                className="intro-message"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{
+                  opacity: animationComplete ? 1 : 0,
+                  y: animationComplete ? 0 : 20,
+                }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              >
+                <span>Welcome to the experience</span>
+              </motion.div>
+            )}
           </div>
         </motion.div>
       )}
