@@ -56,10 +56,10 @@ export default function BackgroundMusic({ introSrc, mainSrc, isIntroComplete }) 
   return (
     <>
       <audio ref={introAudioRef} loop={!isIntroComplete}>
-        <source src={introSrc} type="bgmusic.mp3" />
+        <source src={introSrc} type="/.bgmusic.mp3" />
       </audio>
       <audio ref={mainAudioRef} loop>
-        <source src={mainSrc} type="bgmusic.mp3" />
+        <source src={mainSrc} type="/.bgmusic.mp3" />
       </audio>
     </>
   )

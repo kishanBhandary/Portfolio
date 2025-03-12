@@ -7,12 +7,12 @@ import "./NetflixIntro.css"
 
 export default function NetflixIntro({ name, onComplete }) {
   const [showIntro, setShowIntro] = useState(true)
-  const [showPreAnimation, setShowPreAnimation] = useState(true)
-  const [showLetterAnimation, setShowLetterAnimation] = useState(false)
+  const [animationPhase, setAnimationPhase] = useState(0) // 0: initial, 1: particles, 2: letters
   const [animationComplete, setAnimationComplete] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const containerRef = useRef(null)
   const backgroundControls = useAnimation()
+  const particlesControls = useAnimation()
 
   // Track mouse position for parallax effect
   useEffect(() => {
@@ -51,17 +51,20 @@ export default function NetflixIntro({ name, onComplete }) {
     animateBackground()
   }, [backgroundControls])
 
-  // Pre-animation sequence
+  // Animation sequence
   useEffect(() => {
-    if (showPreAnimation) {
-      const timer = setTimeout(() => {
-        setShowPreAnimation(false)
-        setShowLetterAnimation(true)
-      }, 3000) // Show pre-animation for 3 seconds
+    const sequence = async () => {
+      // Start with particle formation
+      setAnimationPhase(1)
 
-      return () => clearTimeout(timer)
+      // After particles form, show letters
+      setTimeout(() => {
+        setAnimationPhase(2)
+      }, 3000)
     }
-  }, [showPreAnimation])
+
+    sequence()
+  }, [])
 
   // Handle completion of animation
   useEffect(() => {
@@ -80,8 +83,43 @@ export default function NetflixIntro({ name, onComplete }) {
     setAnimationComplete(true)
   }
 
-  // Create particles for background effect
-  const particles = Array.from({ length: 50 }).map((_, i) => {
+  // Create particles for the name formation
+  const nameParticles = Array.from({ length: 150 }).map((_, i) => {
+    const size = Math.random() * 3 + 1
+    const initialX = (Math.random() - 0.5) * window.innerWidth
+    const initialY = (Math.random() - 0.5) * window.innerHeight
+    const delay = Math.random() * 2
+
+    return (
+      <motion.div
+        key={i}
+        className="name-particle"
+        style={{
+          width: `${size}px`,
+          height: `${size}px`,
+        }}
+        initial={{
+          x: initialX,
+          y: initialY,
+          opacity: 0,
+        }}
+        animate={{
+          x: 0,
+          y: 0,
+          opacity: [0, 0.8, 0],
+          scale: [1, 1.5, 0.5],
+        }}
+        transition={{
+          duration: 3,
+          delay: delay,
+          ease: "easeInOut",
+        }}
+      />
+    )
+  })
+
+  // Background particles
+  const backgroundParticles = Array.from({ length: 50 }).map((_, i) => {
     const size = Math.random() * 4 + 1
     const duration = Math.random() * 20 + 10
     const x = Math.random() * 100
@@ -106,19 +144,19 @@ export default function NetflixIntro({ name, onComplete }) {
 
   // Create staggered animation for letters
   const letterVariants = {
-    initial: {
-      y: -100,
-      x: 0,
-      rotateX: 90,
+    hidden: (i) => ({
       opacity: 0,
-      scale: 0.1,
-    },
-    animate: (i) => ({
       y: 0,
-      x: 0,
-      rotateX: 0,
+      scale: 0,
+      filter: "blur(20px)",
+      rotateY: 90,
+    }),
+    visible: (i) => ({
       opacity: 1,
+      y: 0,
       scale: 1,
+      filter: "blur(0px)",
+      rotateY: 0,
       transition: {
         type: "spring",
         damping: 12,
@@ -148,42 +186,18 @@ export default function NetflixIntro({ name, onComplete }) {
     },
   }
 
-  // Logo animation variants
-  const logoVariants = {
+  // Energy wave animation
+  const waveVariants = {
     initial: {
       scale: 0,
       opacity: 0,
-      rotate: -180,
     },
     animate: {
-      scale: [0, 1.2, 1],
-      opacity: 1,
-      rotate: 0,
-      transition: {
-        duration: 1.5,
-        times: [0, 0.7, 1],
-        ease: "easeOut",
-      },
-    },
-    exit: {
-      scale: [1, 1.5, 0],
-      opacity: [1, 1, 0],
-      transition: {
-        duration: 0.8,
-      },
-    },
-  }
-
-  // Energy beam variants
-  const beamVariants = {
-    initial: { scaleX: 0, opacity: 0 },
-    animate: {
-      scaleX: [0, 1, 1, 0],
-      opacity: [0, 0.8, 0.8, 0],
+      scale: [0, 1.5],
+      opacity: [0, 0.8, 0],
       transition: {
         duration: 2,
-        times: [0, 0.3, 0.7, 1],
-        ease: "easeInOut",
+        ease: "easeOut",
       },
     },
   }
@@ -201,84 +215,54 @@ export default function NetflixIntro({ name, onComplete }) {
         >
           <motion.div className="background-gradient" animate={backgroundControls} />
 
-          {particles}
+          {backgroundParticles}
 
           <div className="intro-content">
-            {/* Pre-animation: Logo reveal */}
-            <AnimatePresence>
-              {showPreAnimation && (
-                <motion.div
-                  className="logo-container"
-                  variants={logoVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                >
-                  <div className="logo">
-                    <div className="logo-inner">KB</div>
-                  </div>
+            {/* Energy wave effect */}
+            {animationPhase >= 1 && (
+              <motion.div
+                className="energy-wave"
+                variants={waveVariants}
+                initial="initial"
+                animate="animate"
+                transition={{ delay: 0.5 }}
+              />
+            )}
 
-                  {/* Animated beams */}
-                  <motion.div
-                    className="beam beam-horizontal"
-                    variants={beamVariants}
-                    initial="initial"
-                    animate="animate"
-                    transition={{ delay: 0.5, repeatDelay: 0.5, repeat: 2 }}
-                  />
-                  <motion.div
-                    className="beam beam-vertical"
-                    variants={beamVariants}
-                    initial="initial"
-                    animate="animate"
-                    transition={{ delay: 0.7, repeatDelay: 0.5, repeat: 2 }}
-                  />
-
-                  <motion.div
-                    className="logo-text"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1, duration: 0.5 }}
-                  >
-                    PRESENTS
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Particle formation effect */}
+            {animationPhase >= 1 && <div className="name-particles-container">{nameParticles}</div>}
 
             {/* Main letter animation */}
-            <AnimatePresence>
-              {showLetterAnimation && (
-                <motion.div
-                  className="name-container"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  style={{
-                    perspective: 1000,
-                    transform: `rotateY(${mousePosition.x}deg) rotateX(${-mousePosition.y}deg)`,
-                  }}
-                >
-                  {name.split("").map((letter, index) => (
-                    <motion.div
-                      key={index}
-                      className={`neon-text ${letter === " " ? "w-6 sm:w-10" : ""}`}
-                      custom={index}
-                      variants={letterVariants}
-                      initial="initial"
-                      animate="animate"
-                      whileHover="hover"
-                      onAnimationComplete={index === name.length - 1 ? handleFinalLetterComplete : undefined}
-                      data-text={letter}
-                    >
-                      {letter}
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {animationPhase >= 2 && (
+              <motion.div
+                className="name-container"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                style={{
+                  perspective: 1000,
+                  transform: `rotateY(${mousePosition.x}deg) rotateX(${-mousePosition.y}deg)`,
+                }}
+              >
+                {name.split("").map((letter, index) => (
+                  <motion.div
+                    key={index}
+                    className={`neon-text ${letter === " " ? "w-6 sm:w-10" : ""}`}
+                    custom={index}
+                    variants={letterVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover="hover"
+                    onAnimationComplete={index === name.length - 1 ? handleFinalLetterComplete : undefined}
+                    data-text={letter}
+                  >
+                    {letter}
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
 
             {/* Progress bar */}
-            {showLetterAnimation && (
+            {animationPhase >= 2 && (
               <motion.div
                 className="progress-container"
                 initial={{ opacity: 0 }}
@@ -295,7 +279,7 @@ export default function NetflixIntro({ name, onComplete }) {
             )}
 
             {/* Welcome message */}
-            {showLetterAnimation && (
+            {animationPhase >= 2 && (
               <motion.div
                 className="intro-message"
                 initial={{ opacity: 0, y: 20 }}

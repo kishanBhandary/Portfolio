@@ -43,14 +43,14 @@ function App() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-black" onClick={handleUserInteraction}>
-      {!introComplete && <NetflixIntro name="KISHAN BHANDARY" onComplete={handleIntroComplete} />}
+      {!introComplete && <NetflixIntro name="KISHAN" onComplete={handleIntroComplete} />}
 
       {showTransition && <TransitionAnimation onComplete={handleTransitionComplete} />}
 
       {showMainContent && <MainContent />}
 
       {userInteracted && (
-        <BackgroundMusic introSrc="/intro-music.mp3" mainSrc="/main-music.mp3" isIntroComplete={showMainContent} />
+        <BackgroundMusic introSrc="/.bgmusic.mp3" mainSrc="/.bgmusic.mp3" isIntroComplete={showMainContent} />
       )}
 
       {!userInteracted && (
