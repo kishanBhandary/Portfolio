@@ -17,7 +17,7 @@ export default function MainContent() {
         animate={{ y: 0 }}
         transition={{ delay: 0.5, duration: 0.8 }}
       >
-        Welcome to Kishan Bhandary&apos;s Portfolio
+        
       </motion.h1>
 
       <motion.div
@@ -27,13 +27,11 @@ export default function MainContent() {
         transition={{ delay: 0.8, duration: 0.5 }}
       >
         <p className="text-gray-300 text-lg mb-4">
-          This is where your main content would go. You can add your portfolio items, about section, contact
-          information, or any other content you want to showcase.
+         
         </p>
 
         <p className="text-gray-300 text-lg">
-          The neon-style intro animation has completed, and now we&apos;re showing the main content with a different
-          background music track.
+         
         </p>
       </motion.div>
     </motion.div>

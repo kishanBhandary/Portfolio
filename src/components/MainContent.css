@@ -1,0 +1,61 @@
+/* Scroll indicator styles */
+.scroll-indicator {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 100;
+  }
+  
+  .mouse {
+    width: 30px;
+    height: 50px;
+    border: 2px solid #fff;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 0 5px #b829ff, 0 0 10px #7000ff;
+  }
+  
+  .wheel {
+    width: 6px;
+    height: 6px;
+    background-color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 5px #b829ff, 0 0 10px #7000ff;
+  }
+  
+  .scroll-text {
+    margin-top: 10px;
+    font-family: "Rajdhani", sans-serif;
+    font-size: 14px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px #b829ff, 0 0 10px #7000ff;
+  }
+  
+  /* Add responsive styles for the scroll indicator */
+  @media (max-width: 768px) {
+    .mouse {
+      width: 24px;
+      height: 40px;
+    }
+  
+    .wheel {
+      width: 4px;
+      height: 4px;
+    }
+  
+    .scroll-text {
+      font-size: 12px;
+    }
+  }
+  
+  

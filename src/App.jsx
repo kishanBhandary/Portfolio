@@ -5,6 +5,7 @@ import NetflixIntro from "./components/NetflixIntro"
 import BackgroundMusic from "./components/BackgroundMusic"
 import MainContent from "./components/MainContent"
 import TransitionAnimation from "./components/TransitionAnimation"
+import CustomCursor from "./components/CustomCursor"
 
 function App() {
   const [introComplete, setIntroComplete] = useState(false)
@@ -42,23 +43,27 @@ function App() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-black" onClick={handleUserInteraction}>
-      {!introComplete && <NetflixIntro name="KISHAN" onComplete={handleIntroComplete} />}
+    <>
+      <CustomCursor />
 
-      {showTransition && <TransitionAnimation onComplete={handleTransitionComplete} />}
+      <main className="flex min-h-screen flex-col items-center justify-center bg-black" onClick={handleUserInteraction}>
+        {!introComplete && <NetflixIntro name="KISHAN" onComplete={handleIntroComplete} />}
 
-      {showMainContent && <MainContent />}
+        {showTransition && <TransitionAnimation onComplete={handleTransitionComplete} />}
 
-      {userInteracted && (
-        <BackgroundMusic introSrc="/.bgmusic.mp3" mainSrc="/.bgmusic.mp3" isIntroComplete={showMainContent} />
-      )}
+        {showMainContent && <MainContent />}
 
-      {!userInteracted && (
-        <div className="fixed bottom-4 left-0 right-0 text-center text-white bg-black/80 p-2 rounded-md mx-auto max-w-xs z-50">
-          Click anywhere to enable sound
-        </div>
-      )}
-    </main>
+        {userInteracted && (
+          <BackgroundMusic introSrc="/intro-music.mp3" mainSrc="/main-music.mp3" isIntroComplete={showMainContent} />
+        )}
+
+        {!userInteracted && (
+          <div className="fixed bottom-4 left-0 right-0 text-center text-white bg-black/80 p-2 rounded-md mx-auto max-w-xs z-50">
+            Click anywhere to enable sound
+          </div>
+        )}
+      </main>
+    </>
   )
 }
 
