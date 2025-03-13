@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client"
 
 import { useEffect, useRef, useState } from "react"
@@ -56,10 +57,10 @@ export default function BackgroundMusic({ introSrc, mainSrc, isIntroComplete }) 
   return (
     <>
       <audio ref={introAudioRef} loop={!isIntroComplete}>
-        <source src={introSrc} type="/.bgmusic.mp3" />
+        <source src={"./intro.mp3"} type="audio/mp3" />
       </audio>
       <audio ref={mainAudioRef} loop>
-        <source src={mainSrc} type="/.bgmusic.mp3" />
+        <source src={"./bgmusic.mp3"} type="audio/mp3" />
       </audio>
     </>
   )
