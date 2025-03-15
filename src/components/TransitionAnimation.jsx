@@ -7,31 +7,31 @@ import "./TransitionAnimation.css"
 export default function TransitionAnimation({ onComplete }) {
   return (
     <div className="transition-container">
-      {/* Cosmic wormhole effect */}
+      {/* Portal effect */}
       <motion.div
-        className="wormhole-container"
+        className="portal-container"
         initial={{ scale: 0, opacity: 0 }}
         animate={{
-          scale: [0, 1, 10],
-          opacity: [0, 1, 0],
+          scale: [0, 1, 1.5, 10],
+          opacity: [0, 1, 1, 0],
         }}
         transition={{
-          duration: 3,
-          times: [0, 0.3, 1],
+          duration: 3.5,
+          times: [0, 0.2, 0.7, 1],
           ease: "easeInOut",
         }}
         onAnimationComplete={onComplete}
       >
-        {/* Wormhole rings */}
-        {Array.from({ length: 8 }).map((_, i) => (
+        {/* Portal rings */}
+        {Array.from({ length: 10 }).map((_, i) => (
           <motion.div
             key={i}
-            className="wormhole-ring"
+            className="portal-ring"
             style={{
-              width: `${(i + 1) * 12}%`,
-              height: `${(i + 1) * 12}%`,
-              borderWidth: `${4 - i * 0.4}px`,
-              opacity: 1 - i * 0.1,
+              width: `${(i + 1) * 10}%`,
+              height: `${(i + 1) * 10}%`,
+              borderWidth: `${5 - i * 0.4}px`,
+              opacity: 1 - i * 0.08,
             }}
             animate={{
               rotate: i % 2 === 0 ? 360 : -360,
@@ -39,7 +39,7 @@ export default function TransitionAnimation({ onComplete }) {
             }}
             transition={{
               rotate: {
-                duration: 8 - i,
+                duration: 10 - i,
                 ease: "linear",
                 repeat: Number.POSITIVE_INFINITY,
                 repeatType: "loop",
@@ -56,14 +56,14 @@ export default function TransitionAnimation({ onComplete }) {
 
         {/* Center energy core */}
         <motion.div
-          className="wormhole-core"
+          className="portal-core"
           animate={{
             boxShadow: [
-              "0 0 20px 5px rgba(184, 41, 255, 0.7), 0 0 40px 10px rgba(112, 0, 255, 0.5)",
-              "0 0 40px 10px rgba(184, 41, 255, 0.9), 0 0 80px 20px rgba(112, 0, 255, 0.7)",
-              "0 0 20px 5px rgba(184, 41, 255, 0.7), 0 0 40px 10px rgba(112, 0, 255, 0.5)",
+              "0 0 30px 10px rgba(255, 51, 102, 0.8), 0 0 60px 15px rgba(108, 99, 255, 0.6)",
+              "0 0 60px 15px rgba(255, 51, 102, 1), 0 0 100px 30px rgba(108, 99, 255, 0.8)",
+              "0 0 30px 10px rgba(255, 51, 102, 0.8), 0 0 60px 15px rgba(108, 99, 255, 0.6)",
             ],
-            scale: [1, 1.2, 1],
+            scale: [1, 1.3, 1],
           }}
           transition={{
             duration: 2,
@@ -75,10 +75,10 @@ export default function TransitionAnimation({ onComplete }) {
 
       {/* Energy particles */}
       <div className="energy-particles">
-        {Array.from({ length: 100 }).map((_, i) => {
-          const size = Math.random() * 4 + 2
+        {Array.from({ length: 150 }).map((_, i) => {
+          const size = Math.random() * 6 + 2
           const duration = Math.random() * 2 + 1
-          const delay = Math.random() * 1
+          const delay = Math.random() * 1.5
 
           return (
             <motion.div
@@ -97,8 +97,8 @@ export default function TransitionAnimation({ onComplete }) {
                 scale: 0,
               }}
               animate={{
-                x: [0, (Math.random() - 0.5) * window.innerWidth * 1.5],
-                y: [0, (Math.random() - 0.5) * window.innerHeight * 1.5],
+                x: [0, (Math.random() - 0.5) * window.innerWidth * 2],
+                y: [0, (Math.random() - 0.5) * window.innerHeight * 2],
                 opacity: [0, 1, 0],
                 scale: [0, 1, 0],
                 rotate: [0, Math.random() * 360],
@@ -115,11 +115,11 @@ export default function TransitionAnimation({ onComplete }) {
 
       {/* Light streaks */}
       <div className="light-streaks">
-        {Array.from({ length: 20 }).map((_, i) => {
-          const angle = (i / 20) * 360
-          const length = 50 + Math.random() * 50
-          const width = 1 + Math.random() * 3
-          const delay = i * 0.05
+        {Array.from({ length: 30 }).map((_, i) => {
+          const angle = (i / 30) * 360
+          const length = 70 + Math.random() * 80
+          const width = 1 + Math.random() * 4
+          const delay = i * 0.03
 
           return (
             <motion.div
@@ -137,12 +137,12 @@ export default function TransitionAnimation({ onComplete }) {
               }}
               animate={{
                 width: [0, length, 0],
-                opacity: [0, 0.7, 0],
+                opacity: [0, 0.8, 0],
                 x: "-50%",
                 y: "-50%",
               }}
               transition={{
-                duration: 2,
+                duration: 2.5,
                 delay: delay,
                 ease: "easeInOut",
               }}
@@ -151,13 +151,25 @@ export default function TransitionAnimation({ onComplete }) {
         })}
       </div>
 
-      {/* Cosmic dust */}
+      {/* Digital glitch effect */}
       <motion.div
-        className="cosmic-dust"
+        className="digital-glitch"
         initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 0.3, 0] }}
-        transition={{ duration: 3 }}
-      />
+        animate={{
+          opacity: [0, 0.8, 0],
+          x: ["-50%", "-50%"],
+          y: ["-50%", "-50%"],
+        }}
+        transition={{
+          duration: 3,
+          times: [0, 0.5, 1],
+        }}
+      >
+        <div className="glitch-text">LOADING</div>
+      </motion.div>
+
+      {/* Vignette overlay */}
+      <div className="vignette-overlay"></div>
     </div>
   )
 }

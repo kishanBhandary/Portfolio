@@ -35,41 +35,24 @@ export default function MainContent() {
   // Track mouse position for parallax effect
   useEffect(() => {
     const handleMouseMove = (e) => {
-      if (containerRef.current) {
-        const { left, top, width, height } = containerRef.current.getBoundingClientRect()
-        const x = (e.clientX - left - width / 2) / 25
-        const y = (e.clientY - top - height / 2) / 25
-        setMousePosition({ x, y })
-      }
+      setMousePosition({ x: e.clientX, y: e.clientY })
     }
 
     window.addEventListener("mousemove", handleMouseMove)
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
-  // Generate stars for the background
-  const stars = Array.from({ length: 100 }).map((_, i) => {
-    const size = Math.random() * 2 + 1
-    const x = Math.random() * 100
-    const y = Math.random() * 100
-    const animationDuration = Math.random() * 3 + 2
-    const delay = Math.random() * 2
+  // Calculate mouse parallax values
+  const calculateParallax = (depth = 10) => {
+    if (typeof window === "undefined") return { x: 0, y: 0 }
 
-    return (
-      <div
-        key={i}
-        className="star"
-        style={{
-          width: `${size}px`,
-          height: `${size}px`,
-          left: `${x}%`,
-          top: `${y}%`,
-          animationDuration: `${animationDuration}s`,
-          animationDelay: `${delay}s`,
-        }}
-      />
-    )
-  })
+    const centerX = window.innerWidth / 2
+    const centerY = window.innerHeight / 2
+    const x = (mousePosition.x - centerX) / depth
+    const y = (mousePosition.y - centerY) / depth
+
+    return { x, y }
+  }
 
   // Project data
   const projects = [
@@ -98,17 +81,110 @@ export default function MainContent() {
 
   // Skills data
   const skills = [
-    { name: "Frontend Development", level: 90, color: "#b829ff" },
-    { name: "Backend Development", level: 85, color: "#7000ff" },
-    { name: "AI & Machine Learning", level: 80, color: "#ffcc00" },
-    { name: "UI/UX Design", level: 75, color: "#ff9900" },
-    { name: "DevOps & Cloud", level: 70, color: "#b829ff" },
+    { name: "Frontend Development", level: 90 },
+    { name: "Backend Development", level: 85 },
+    { name: "AI & Machine Learning", level: 80 },
+    { name: "UI/UX Design", level: 75 },
+    { name: "DevOps & Cloud", level: 70 },
   ]
 
   return (
     <div className="portfolio-container">
-      {/* Subtle star background */}
-      <div className="stars-container">{stars}</div>
+      {/* Parallax background elements */}
+      <div className="parallax-bg">
+        <motion.div
+          className="parallax-shape shape1"
+          style={{
+            x: calculateParallax(15).x,
+            y: calculateParallax(15).y,
+          }}
+        />
+        <motion.div
+          className="parallax-shape shape2"
+          style={{
+            x: calculateParallax(25).x,
+            y: calculateParallax(25).y,
+          }}
+        />
+        <motion.div
+          className="parallax-shape shape3"
+          style={{
+            x: calculateParallax(20).x,
+            y: calculateParallax(20).y,
+          }}
+        />
+        <motion.div
+          className="parallax-shape shape4"
+          style={{
+            x: calculateParallax(30).x,
+            y: calculateParallax(30).y,
+          }}
+        />
+        <motion.div
+          className="parallax-shape shape5"
+          style={{
+            x: calculateParallax(10).x,
+            y: calculateParallax(10).y,
+          }}
+        />
+        <motion.div
+          className="parallax-shape shape6"
+          style={{
+            x: calculateParallax(35).x,
+            y: calculateParallax(35).y,
+          }}
+        />
+
+        {/* Floating elements */}
+        <motion.div
+          className="floating-element element1"
+          style={{
+            x: calculateParallax(8).x,
+            y: calculateParallax(8).y,
+          }}
+          animate={{
+            y: [0, -15, 0],
+            rotate: [0, 5, 0, -5, 0],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Number.POSITIVE_INFINITY,
+            repeatType: "reverse",
+          }}
+        />
+        <motion.div
+          className="floating-element element2"
+          style={{
+            x: calculateParallax(12).x,
+            y: calculateParallax(12).y,
+          }}
+          animate={{
+            y: [0, 20, 0],
+            rotate: [0, -8, 0, 8, 0],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Number.POSITIVE_INFINITY,
+            repeatType: "reverse",
+          }}
+        />
+        <motion.div
+          className="floating-element element3"
+          style={{
+            x: calculateParallax(6).x,
+            y: calculateParallax(6).y,
+          }}
+          animate={{
+            y: [0, -25, 0],
+            rotate: [0, 10, 0, -10, 0],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Number.POSITIVE_INFINITY,
+            repeatType: "reverse",
+          }}
+        />
+      </div>
 
       {/* Hero section */}
       <motion.section
@@ -120,45 +196,37 @@ export default function MainContent() {
       >
         <div className="hero-content">
           <motion.div
-            className="profile-container"
+            className="hero-left"
             style={{
-              transform: `perspective(1200px) rotateY(${mousePosition.x}deg) rotateX(${-mousePosition.y}deg)`,
+              x: calculateParallax(30).x,
+              y: calculateParallax(30).y,
             }}
           >
-            {/* Profile image with glow effect */}
-            <motion.div
-              className="profile-image-container"
-              animate={{
-                boxShadow: [
-                  "0 0 20px rgba(184, 41, 255, 0.3)",
-                  "0 0 40px rgba(184, 41, 255, 0.5)",
-                  "0 0 20px rgba(184, 41, 255, 0.3)",
-                ],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Number.POSITIVE_INFINITY,
-                repeatType: "reverse",
-              }}
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+              Kishan Bhandary
+            </motion.h1>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <img src="/robot-human-ai.png" alt="Kishan Bhandary" className="profile-image" />
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            className="hero-text"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          >
-            <h1>Kishan Bhandary</h1>
-            <h2>AI & Full Stack Developer</h2>
-            <p>
+              AI & Full Stack Developer
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
               Crafting innovative digital experiences at the intersection of human creativity and artificial
               intelligence.
-            </p>
+            </motion.p>
 
-            <div className="hero-buttons">
+            <motion.div
+              className="hero-buttons"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
               <motion.a
                 href="#projects"
                 className="btn btn-primary"
@@ -175,6 +243,39 @@ export default function MainContent() {
               >
                 Contact Me
               </motion.a>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            className="hero-right"
+            style={{
+              x: calculateParallax(-20).x,
+              y: calculateParallax(-20).y,
+            }}
+          >
+            <div className="profile-image-wrapper">
+              <motion.div
+                className="profile-image-container"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.3 }}
+              >
+                <img src="/robot-human-ai.png" alt="Kishan Bhandary" className="profile-image" />
+                <div className="image-overlay"></div>
+              </motion.div>
+              <div className="image-decoration">
+                <motion.div
+                  className="decoration-circle"
+                  animate={{
+                    rotate: 360,
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{
+                    rotate: { duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
+                    scale: { duration: 3, repeat: Number.POSITIVE_INFINITY, repeatType: "reverse" },
+                  }}
+                />
+              </div>
             </div>
           </motion.div>
         </div>
@@ -187,35 +288,76 @@ export default function MainContent() {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 0.5 }}
           >
-            <div className="mouse">
+            <div className="arrow-container">
               <motion.div
-                className="wheel"
+                className="arrow"
                 animate={{
-                  y: [0, 10, 0],
-                  opacity: [1, 0.5, 1],
+                  y: [0, 20, 0],
+                  opacity: [0, 1, 0],
                 }}
                 transition={{
                   duration: 1.5,
                   repeat: Number.POSITIVE_INFINITY,
                   repeatType: "loop",
                 }}
-              />
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 5V19M12 19L5 12M12 19L19 12"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </motion.div>
+              <motion.div
+                className="arrow arrow-2"
+                animate={{
+                  y: [0, 20, 40],
+                  opacity: [0, 0.5, 0],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "loop",
+                  delay: 0.2,
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 5V19M12 19L5 12M12 19L19 12"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </motion.div>
+              <motion.div
+                className="arrow arrow-3"
+                animate={{
+                  y: [0, 20, 60],
+                  opacity: [0, 0.3, 0],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "loop",
+                  delay: 0.4,
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 5V19M12 19L5 12M12 19L19 12"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </motion.div>
             </div>
-            <motion.div
-              className="scroll-text"
-              animate={{
-                y: [0, 5, 0],
-                opacity: [1, 0.7, 1],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Number.POSITIVE_INFINITY,
-                repeatType: "loop",
-                delay: 0.2,
-              }}
-            >
-              Scroll Down
-            </motion.div>
           </motion.div>
         )}
       </motion.section>
@@ -235,7 +377,13 @@ export default function MainContent() {
         </div>
 
         <div className="about-content">
-          <div className="about-text">
+          <motion.div
+            className="about-text"
+            style={{
+              x: calculateParallax(50).x,
+              y: calculateParallax(50).y,
+            }}
+          >
             <p>
               I'm a passionate developer with expertise in creating cutting-edge applications that leverage the power of
               artificial intelligence and modern web technologies. With over 5 years of experience in the industry, I've
@@ -261,9 +409,15 @@ export default function MainContent() {
                 <span className="stat-label">Happy Clients</span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="skills-container">
+          <motion.div
+            className="skills-container"
+            style={{
+              x: calculateParallax(-50).x,
+              y: calculateParallax(-50).y,
+            }}
+          >
             <h3>My Skills</h3>
 
             <div className="skills-grid">
@@ -276,7 +430,6 @@ export default function MainContent() {
                   <div className="skill-bar">
                     <motion.div
                       className="skill-progress"
-                      style={{ backgroundColor: skill.color }}
                       initial={{ width: 0 }}
                       whileInView={{ width: `${skill.level}%` }}
                       viewport={{ once: true }}
@@ -286,7 +439,7 @@ export default function MainContent() {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </motion.section>
 
@@ -313,9 +466,10 @@ export default function MainContent() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{
-                y: -10,
-                boxShadow: "0 10px 30px rgba(184, 41, 255, 0.2)",
+              whileHover={{ y: -10 }}
+              style={{
+                x: calculateParallax(80 + index * 10).x,
+                y: calculateParallax(80 + index * 10).y,
               }}
             >
               <div className="project-image">
@@ -341,7 +495,15 @@ export default function MainContent() {
           ))}
         </div>
 
-        <motion.div className="view-all-container" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        <motion.div
+          className="view-all-container"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            x: calculateParallax(40).x,
+            y: calculateParallax(40).y,
+          }}
+        >
           <a href="#" className="view-all-btn">
             View All Projects
           </a>
@@ -363,7 +525,13 @@ export default function MainContent() {
         </div>
 
         <div className="contact-container">
-          <div className="contact-info">
+          <motion.div
+            className="contact-info"
+            style={{
+              x: calculateParallax(30).x,
+              y: calculateParallax(30).y,
+            }}
+          >
             <h3>Let's Work Together</h3>
             <p>
               I'm currently available for freelance work or full-time positions. If you have a project that needs some
@@ -411,9 +579,15 @@ export default function MainContent() {
                 whileTap={{ scale: 0.9 }}
               ></motion.a>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="contact-form-container">
+          <motion.div
+            className="contact-form-container"
+            style={{
+              x: calculateParallax(-30).x,
+              y: calculateParallax(-30).y,
+            }}
+          >
             <form className="contact-form">
               <div className="form-group">
                 <input type="text" id="name" placeholder="Your Name" required />
@@ -436,7 +610,7 @@ export default function MainContent() {
                 Send Message
               </motion.button>
             </form>
-          </div>
+          </motion.div>
         </div>
       </motion.section>
 
@@ -447,6 +621,39 @@ export default function MainContent() {
           <p>Designed & Built with ❤️</p>
         </div>
       </footer>
+
+      {/* Mouse follower */}
+      <motion.div
+        className="mouse-follower"
+        style={{
+          x: mousePosition.x - 15,
+          y: mousePosition.y - 15,
+        }}
+        animate={{
+          scale: [1, 1.2, 1],
+        }}
+        transition={{
+          scale: {
+            duration: 1,
+            repeat: Number.POSITIVE_INFINITY,
+            repeatType: "reverse",
+          },
+        }}
+      />
+      <motion.div
+        className="mouse-follower-trail"
+        style={{
+          x: mousePosition.x - 25,
+          y: mousePosition.y - 25,
+          opacity: 0.3,
+        }}
+        transition={{
+          default: {
+            duration: 0.3,
+            ease: "linear",
+          },
+        }}
+      />
     </div>
   )
 }
