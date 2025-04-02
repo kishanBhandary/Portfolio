@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+  /* eslint-disable no-unused-vars */
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -541,21 +541,21 @@ export default function MainContent() {
             <div className="contact-details">
               <div className="contact-item">
                 <div className="contact-icon email-icon"></div>
-                <span>kishan.bhandary@example.com</span>
+                <span>kishanbhandary0@gmail.com</span>
               </div>
               <div className="contact-item">
                 <div className="contact-icon location-icon"></div>
-                <span>San Francisco, CA</span>
+                <span>Mangalore, India</span>
               </div>
               <div className="contact-item">
                 <div className="contact-icon phone-icon"></div>
-                <span>+1 (555) 123-4567</span>
+                <span>91+ 9164490335</span>
               </div>
             </div>
 
             <div className="social-links">
               <motion.a
-                href="#"
+                href="https://github.com/kishanBhandary"
                 className="social-link github"
                 whileHover={{ y: -5, scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
