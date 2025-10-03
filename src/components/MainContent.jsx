@@ -1,4 +1,4 @@
-  /* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars */
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -205,24 +205,61 @@ export default function MainContent() {
               y: calculateParallax(30).y,
             }}
           >
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            Kishan C Bhandary
-            </motion.h1>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              Java Backhand Developer
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              Crafting innovative digital experiences at the intersection of human creativity and artificial
-              intelligence.
-            </motion.p>
+            <div className="hero-text-container">
+              <motion.div
+                className="greeting-text"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <span className="hello-text">Hello, I'm</span>
+              </motion.div>
+
+              <motion.h1
+                className="name-title"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                Kishan C Bhandary
+              </motion.h1>
+
+              <motion.h2
+                className="role-title"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                Backend Developer
+              </motion.h2>
+
+              <motion.div
+                className="description-container"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                <p className="description-text">
+                  Crafting innovative digital experiences at the intersection of human creativity and artificial intelligence.
+                </p>
+              </motion.div>
+
+              <motion.div
+                className="hero-credentials"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+              >
+                <div className="credential-item">
+                  <span className="credential-icon">🎓</span>
+                  <span className="credential-text">Computer Science Graduate</span>
+                </div>
+                <div className="credential-item">
+                  <span className="credential-icon">💼</span>
+                  <span className="credential-text">Full-Stack Developer</span>
+                </div>
+              </motion.div>
+            </div>
 
             <motion.div
               className="hero-buttons"
@@ -262,23 +299,10 @@ export default function MainContent() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.3 }}
+                whileHover={{ scale: 1.05 }}
               >
-                <img src="/robot-human-ai.png" alt="Kishan Bhandary" className="profile-image" />
-                <div className="image-overlay"></div>
+                <img src="/kishan.png" alt="Kishan Bhandary" className="profile-image" />
               </motion.div>
-              <div className="image-decoration">
-                <motion.div
-                  className="decoration-circle"
-                  animate={{
-                    rotate: 360,
-                    scale: [1, 1.05, 1],
-                  }}
-                  transition={{
-                    rotate: { duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
-                    scale: { duration: 3, repeat: Number.POSITIVE_INFINITY, repeatType: "reverse" },
-                  }}
-                />
-              </div>
             </div>
           </motion.div>
         </div>
