@@ -6,7 +6,9 @@ body {
 
 a,
 button,
-[role="button"] {
+[role="button"],
+input[type="button"],
+input[type="submit"] {
   cursor: none;
 }
 
@@ -18,8 +20,7 @@ button,
   height: 100%;
   z-index: 9999;
   pointer-events: none;
-  overflow: hidden;
-  will-change: transform;
+  contain: layout style paint;
 }
 
 .cursor-container.hidden {
@@ -36,7 +37,7 @@ button,
   align-items: center;
   justify-content: center;
   transform: translate(-50%, -50%);
-  will-change: transform, opacity, scale;
+  will-change: transform;
 }
 
 .cursor-ring {
@@ -47,6 +48,7 @@ button,
   border-radius: 50%;
   box-shadow: 0 0 5px #b829ff, 0 0 10px #7000ff;
   animation: pulse-cursor 1.5s infinite alternate;
+  will-change: opacity;
 }
 
 .cursor-dot {
@@ -66,11 +68,11 @@ button,
   transform: translate(-50%, -50%);
   pointer-events: none;
   box-shadow: 0 0 5px rgba(184, 41, 255, 0.5), 0 0 10px rgba(112, 0, 255, 0.3);
-  will-change: transform, opacity, scale;
+  will-change: transform;
 }
 
 .click-effect {
-  position: absolute;
+  position: fixed;
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -98,7 +100,9 @@ button,
 
   a,
   button,
-  [role="button"] {
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
     cursor: pointer;
   }
 
@@ -106,4 +110,3 @@ button,
     display: none;
   }
 }
-
