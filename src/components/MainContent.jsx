@@ -4,6 +4,9 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, useScroll, useTransform, useSpring, useAnimation } from "framer-motion"
 import "./MainContent.css"
+import projectImage1 from "../assets/1.webp"
+import projectImage2 from "../assets/2.jpg"
+import projectImage3 from "../assets/3.webp"
 
 export default function MainContent() {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true)
@@ -61,21 +64,21 @@ export default function MainContent() {
       title: "AI-Powered Analytics Dashboard",
       description: "A real-time analytics platform with AI-driven insights and predictive modeling capabilities.",
       tags: ["React", "TensorFlow.js", "D3.js", "Node.js"],
-      image: "/placeholder.svg?height=300&width=500",
+      image: projectImage1,
     },
     {
       id: 2,
       title: "Immersive VR Experience",
       description: "A virtual reality application that creates interactive and educational experiences for users.",
       tags: ["Three.js", "WebXR", "React", "GLSL"],
-      image: "/placeholder.svg?height=300&width=500",
+      image: projectImage2,
     },
     {
       id: 3,
       title: "Blockchain Secure Messaging",
       description: "End-to-end encrypted messaging platform built on blockchain technology for maximum security.",
       tags: ["Solidity", "Web3.js", "React", "Node.js"],
-      image: "/placeholder.svg?height=300&width=500",
+      image: projectImage3,
     },
   ]
 
