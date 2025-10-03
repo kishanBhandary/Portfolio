@@ -54,4 +54,51 @@ Your pull request will be reviewed. Make any requested changes and keep an eye o
 
 ---
 
+## How to Run This React Project
+
+Follow these steps to run the React project locally on your machine:
+
+### Prerequisites
+
+- Node.js (version 14.x or higher recommended)
+- npm (comes with Node.js) or yarn
+
+### Steps
+
+1. **Install Dependencies**
+
+   Navigate to the project directory and install the required packages:
+
+   ```sh
+   npm install
+   ```
+   or if you use yarn:
+   ```sh
+   yarn
+   ```
+
+2. **Start the Development Server**
+
+   Run the following command to start the local development server:
+
+   ```sh
+   npm start
+   ```
+   or with yarn:
+   ```sh
+   yarn start
+   ```
+
+3. **Open in Browser**
+
+   After the server starts, open your browser and go to:
+
+   ```
+   http://localhost:3000
+   ```
+
+   The project should now be running locally!
+
+---
+
 Thank you for contributing to Hacktoberfest 2025! Happy coding!
