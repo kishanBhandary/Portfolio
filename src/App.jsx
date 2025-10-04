@@ -51,7 +51,11 @@ function App() {
 
         {showTransition && <TransitionAnimation onComplete={handleTransitionComplete} />}
 
-        {showMainContent && <MainContent />}
+        {showMainContent && (
+          <>
+            <MainContent />
+          </>
+        )}
 
         {userInteracted && (
           <BackgroundMusic introSrc="/intro.mp3" mainSrc="/bgmusic.mp3" isIntroComplete={showMainContent} />
@@ -60,8 +64,8 @@ function App() {
         {!userInteracted && (
           <div className="fixed bottom-4 left-0 right-0 text-center text-white bg-black/80 p-2 rounded-md mx-auto max-w-xs z-50">
             <button>
-            Click anywhere to enable sound
-              </button>
+              Click anywhere to enable sound
+            </button>
           </div>
         )}
       </main>
