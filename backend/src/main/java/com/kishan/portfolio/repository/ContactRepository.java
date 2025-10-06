@@ -18,8 +18,7 @@ public interface ContactRepository extends MongoRepository<Contact, String> {
     List<Contact> findByCreatedAtAfter(LocalDateTime date);
     
     // Find contacts ordered by creation date (most recent first)
-    @Query(sort = "{ 'createdAt' : -1 }")
-    List<Contact> findAllOrderByCreatedAtDesc();
+    List<Contact> findAllByOrderByCreatedAtDesc();
     
     // Count contacts by email (for spam detection)
     long countByEmail(String email);

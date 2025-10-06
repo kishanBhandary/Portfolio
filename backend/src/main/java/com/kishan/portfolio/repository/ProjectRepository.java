@@ -18,8 +18,7 @@ public interface ProjectRepository extends MongoRepository<Project, String> {
     List<Project> findByTechnology(String technology);
     
     // Find projects ordered by creation date (most recent first)
-    @Query(sort = "{ 'createdAt' : -1 }")
-    List<Project> findAllOrderByCreatedAtDesc();
+    List<Project> findAllByOrderByCreatedAtDesc();
     
     // Find projects containing title keyword (case insensitive)
     List<Project> findByTitleContainingIgnoreCase(String keyword);

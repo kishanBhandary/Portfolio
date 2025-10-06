@@ -58,7 +58,7 @@ public class ContactController {
      * Get contact by ID (admin endpoint)
      */
     @GetMapping("/admin/{id}")
-    public ResponseEntity<Contact> getContactById(@PathVariable Long id) {
+    public ResponseEntity<Contact> getContactById(@PathVariable String id) {
         Optional<Contact> contact = contactService.getContactById(id);
         return contact.map(ResponseEntity::ok)
                      .orElse(ResponseEntity.notFound().build());
@@ -68,7 +68,7 @@ public class ContactController {
      * Delete contact (admin endpoint)
      */
     @DeleteMapping("/admin/{id}")
-    public ResponseEntity<Map<String, Object>> deleteContact(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> deleteContact(@PathVariable String id) {
         Map<String, Object> response = new HashMap<>();
         
         try {

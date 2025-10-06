@@ -37,7 +37,7 @@ public class ContactService {
      * Get all contacts (admin only)
      */
     public List<Contact> getAllContacts() {
-        return contactRepository.findAllOrderByCreatedAtDesc();
+        return contactRepository.findAllByOrderByCreatedAtDesc();
     }
     
     /**

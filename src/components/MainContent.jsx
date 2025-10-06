@@ -2,18 +2,16 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { motion, useScroll, useTransform, useSpring, useAnimation } from "framer-motion"
+import { motion, useScroll, useTransform, useSpring, useAnimation, useInView } from "framer-motion"
 import ApiService from "../services/ApiService"
 import "./MainContent.css"
-import projectImage1 from "../assets/1.webp"
-import projectImage2 from "../assets/2.jpg"
-import projectImage3 from "../assets/3.webp"
 
 export default function MainContent() {
-  const [showScrollIndicator, setShowScrollIndicator] = useState(true)
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [cursorVariant, setCursorVariant] = useState("default")
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,18 +22,40 @@ export default function MainContent() {
     success: false,
     error: null
   })
-  const containerRef = useRef(null)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [activeSection, setActiveSection] = useState('home')
   const { scrollYProgress } = useScroll()
-  const controls = useAnimation()
+  const heroRef = useRef(null)
+  const isHeroInView = useInView(heroRef, { threshold: 0.5 })
 
-  // Parallax effect values based on scroll
-  const yParallax1 = useTransform(scrollYProgress, [0, 1], [0, -100])
-  const yParallax2 = useTransform(scrollYProgress, [0, 1], [0, -200])
-  const opacity = useTransform(scrollYProgress, [0, 0.3], [1, 0])
+  // Mouse tracking effect
+  useEffect(() => {
+    const updateMousePosition = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY })
+    }
 
-  // Smooth scroll progress
-  const smoothY = useSpring(scrollYProgress, { stiffness: 100, damping: 30 })
+    window.addEventListener('mousemove', updateMousePosition)
+    return () => window.removeEventListener('mousemove', updateMousePosition)
+  }, [])
+
+  // Cursor variants for different hover states
+  const cursorVariants = {
+    default: {
+      x: mousePosition.x - 16,
+      y: mousePosition.y - 16,
+      scale: 1,
+    },
+    text: {
+      x: mousePosition.x - 32,
+      y: mousePosition.y - 32,
+      scale: 1.5,
+      mixBlendMode: "difference",
+    },
+    hover: {
+      x: mousePosition.x - 24,
+      y: mousePosition.y - 24,
+      scale: 1.2,
+    }
+  }
 
   // Fetch projects from API
   useEffect(() => {
@@ -76,348 +96,481 @@ export default function MainContent() {
     }
   }
 
-  // Hide scroll indicator when user scrolls
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setShowScrollIndicator(false)
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  // Track mouse position for parallax effect
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
-
-    window.addEventListener("mousemove", handleMouseMove)
-    return () => window.removeEventListener("mousemove", handleMouseMove)
-  }, [])
-
-  // Calculate mouse parallax values
-  const calculateParallax = (depth = 10) => {
-    if (typeof window === "undefined") return { x: 0, y: 0 }
-
-    const centerX = window.innerWidth / 2
-    const centerY = window.innerHeight / 2
-    const x = (mousePosition.x - centerX) / depth
-    const y = (mousePosition.y - centerY) / depth
-
-    return { x, y }
-  }
-
-  // Skills data
+  // Skills data with actual technology logos and enhanced animations
   const skills = [
-    { name: "Frontend Development", level: 90 },
-    { name: "Backend Development", level: 85 },
-    { name: "AI & Machine Learning", level: 80 },
-    { name: "UI/UX Design", level: 75 },
-    { name: "DevOps & Cloud", level: 70 },
+    { name: "React & Next.js", level: 95, icon: "⚛️", color: "#61DAFB" },
+    { name: "Node.js & Express", level: 90, icon: "🚀", color: "#339933" },
+    { name: "Java & Spring Boot", level: 88, icon: "☕", color: "#ED8B00" },
+    { name: "MongoDB & PostgreSQL", level: 85, icon: "🗄️", color: "#47A248" },
+    { name: "AWS & Docker", level: 82, icon: "☁️", color: "#FF9900" },
+    { name: "TypeScript", level: 90, icon: "📘", color: "#3178C6" },
+    { name: "Python", level: 85, icon: "🐍", color: "#3776AB" },
+    { name: "Git & GitHub", level: 92, icon: "📝", color: "#F05032" }
   ]
+
+  // Floating language logos data with SVG icons
+  const floatingLogos = [
+    {
+      name: "React",
+      color: "#61DAFB",
+      size: 40,
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 9.861A2.139 2.139 0 1 0 12 14.139 2.139 2.139 0 1 0 12 9.861zM6.008 16.255l-.472-.12C2.018 15.246 0 13.737 0 11.996s2.018-3.25 5.536-4.139l.472-.119.133.468a23.53 23.53 0 0 0 1.363 3.578l.101.213-.101.213a23.307 23.307 0 0 0-1.363 3.578l-.133.467zM5.317 8.95c-2.674.751-4.315 1.9-4.315 3.046 0 1.145 1.641 2.294 4.315 3.046a24.95 24.95 0 0 1 1.182-3.046A24.752 24.752 0 0 1 5.317 8.95zM17.992 16.255l-.133-.469a23.357 23.357 0 0 0-1.364-3.577l-.101-.213.101-.213a23.42 23.42 0 0 0 1.364-3.578l.133-.468.473.119c3.517.889 5.535 2.398 5.535 4.14s-2.018 3.25-5.535 4.139l-.473.120zm-.491-4.259c.48 1.039.877 2.06 1.182 3.046 2.675-.752 4.315-1.901 4.315-3.046 0-1.146-1.641-2.294-4.315-3.046a24.788 24.788 0 0 1-1.182 3.046zM5.31 8.945l-.133-.467C4.188 4.992 4.488 2.494 6 1.622c1.483-.856 3.864.155 6.359 2.716l.34.349-.34.349a23.552 23.552 0 0 0-2.422 2.967l-.135.193-.235.02a23.657 23.657 0 0 0-3.785.61l-.472.119zm1.896-6.63c-.268 0-.505.058-.705.173-.994.573-1.17 2.565-.485 5.253a25.122 25.122 0 0 1 3.233-.501 24.847 24.847 0 0 1 2.052-2.544c-1.56-1.519-3.037-2.381-4.095-2.381zM16.795 22.677c-.001 0-.001 0 0 0-1.425 0-3.255-1.073-5.154-3.023l-.34-.349.34-.349a23.53 23.53 0 0 0 2.421-2.968l.135-.193.234-.02a23.63 23.63 0 0 0 3.787-.609l.472-.119.134.468c.987 3.484.688 5.983-.824 6.854a2.38 2.38 0 0 1-1.205.308zm-4.096-3.381c1.56 1.519 3.037 2.381 4.095 2.381h.001c.267 0 .505-.058.704-.173.994-.573 1.171-2.566.485-5.254a25.02 25.02 0 0 1-3.234.501 24.674 24.674 0 0 1-2.051 2.545zM18.69 8.945l-.472-.119a23.479 23.479 0 0 0-3.787-.61l-.234-.02-.135-.193a23.414 23.414 0 0 0-2.421-2.967l-.34-.349.34-.349C14.135 1.778 16.515.767 18 1.622c1.512.872 1.812 3.37.823 6.855l-.133.468zM14.75 7.24c1.142.104 2.227.273 3.234.501.686-2.688.509-4.68-.485-5.253-.988-.571-2.845.304-4.8 2.208A24.849 24.849 0 0 1 14.75 7.24zM7.206 22.677A2.38 2.38 0 0 1 6 22.369c-1.512-.871-1.812-3.369-.823-6.854l.132-.468.472.119c1.155.291 2.429.496 3.785.609l.235.02.134.193a23.596 23.596 0 0 0 2.422 2.968l.34.349-.34.349c-1.898 1.95-3.728 3.023-5.151 3.023zm-1.19-6.427c-.686 2.688-.509 4.681.485 5.254.988.571 2.845-.309 4.8-2.208a24.998 24.998 0 0 1-2.052-2.545 25.049 25.049 0 0 1-3.233-.501zM12 16.878c-.663 0-1.299-.018-1.91-.054l-.464-.027.171-.403a25.558 25.558 0 0 0 1.743-4.347l.459-.016.459.016c.259.886.549 1.719.859 2.497.45 1.135.858 2.116 1.187 2.942l.084.16-.164.027c-.22.037-.442.063-.663.086C13.317 16.873 12.663 16.878 12 16.878zm-1.379-1.09c.6.047 1.208.07 1.379.07s.777-.023 1.379-.07a24.708 24.708 0 0 1-1.379-3.34A24.708 24.708 0 0 1 10.621 15.788z" />
+        </svg>
+      )
+    },
+    {
+      name: "JavaScript",
+      color: "#F7DF1E",
+      size: 38,
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z" />
+        </svg>
+      )
+    },
+    {
+      name: "TypeScript",
+      color: "#3178C6",
+      size: 38,
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z" />
+        </svg>
+      )
+    },
+    {
+      name: "Node.js",
+      color: "#339933",
+      size: 42,
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.998,24c-0.321,0-0.641-0.084-0.922-0.247l-2.936-1.737c-0.438-0.245-0.224-0.332-0.08-0.383 c0.585-0.203,0.703-0.25,1.328-0.604c0.065-0.037,0.151-0.023,0.218,0.017l2.256,1.339c0.082,0.045,0.197,0.045,0.272,0l8.795-5.076 c0.082-0.047,0.134-0.141,0.134-0.238V6.921c0-0.099-0.053-0.192-0.137-0.242l-8.791-5.072c-0.081-0.047-0.189-0.047-0.271,0 L3.075,6.68C2.99,6.729,2.936,6.825,2.936,6.921v10.15c0,0.097,0.054,0.189,0.139,0.235l2.409,1.392 c1.307,0.654,2.108-0.116,2.108-0.89V7.787c0-0.142,0.114-0.253,0.256-0.253h1.115c0.139,0,0.255,0.112,0.255,0.253v10.021 c0,1.745-0.95,2.745-2.604,2.745c-0.508,0-0.909,0-2.026-0.551L2.28,18.675c-0.57-0.329-0.922-0.945-0.922-1.604V6.921 c0-0.659,0.353-1.275,0.922-1.603l8.795-5.082c0.557-0.315,1.296-0.315,1.848,0l8.794,5.082c0.570,0.329,0.924,0.944,0.924,1.603 v10.15c0,0.659-0.354,1.273-0.924,1.604l-8.794,5.078C12.643,23.916,12.324,24,11.998,24z M19.099,13.993 c0-1.9-1.284-2.406-3.987-2.763c-2.731-0.361-3.009-0.548-3.009-1.187c0-0.528,0.235-1.233,2.258-1.233 c1.807,0,2.473,0.389,2.747,1.607c0.024,0.115,0.129,0.199,0.247,0.199h1.141c0.071,0,0.138-0.031,0.186-0.081 c0.048-0.054,0.074-0.123,0.067-0.196c-0.177-2.098-1.571-3.076-4.388-3.076c-2.508,0-4.004,1.058-4.004,2.833 c0,1.925,1.488,2.457,3.895,2.695c2.88,0.282,3.103,0.703,3.103,1.269c0,0.983-0.789,1.402-2.642,1.402 c-2.327,0-2.839-0.584-3.011-1.742c-0.02-0.124-0.126-0.215-0.253-0.215h-1.137c-0.141,0-0.254,0.112-0.254,0.253 c0,1.482,0.806,3.248,4.655,3.248C17.501,17.007,19.099,15.91,19.099,13.993z" />
+        </svg>
+      )
+    },
+    {
+      name: "Python",
+      color: "#3776AB",
+      size: 40,
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z" />
+        </svg>
+      )
+    },
+    {
+      name: "Java",
+      color: "#ED8B00",
+      size: 40,
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8.851 18.56s-.917.534.653.714c1.902.218 2.874.187 4.969-.211 0 0 .552.346 1.321.646-4.699 2.013-10.633-.118-6.943-1.149M8.276 15.933s-1.028.761.542.924c2.032.209 3.636.227 6.413-.308 0 0 .384.389.987.602-5.679 1.661-12.007.13-7.942-1.218M13.116 11.475c1.158 1.333-.304 2.533-.304 2.533s2.939-1.518 1.589-3.418c-1.261-1.772-2.228-2.652 3.007-5.688 0-.001-8.216 2.051-4.292 6.573M19.33 20.504s.679.559-.747.991c-2.712.822-11.288 1.069-13.669.033-.856-.373.75-.89 1.254-.998.527-.114.828-.093.828-.093-.953-.671-6.156 1.317-2.643 1.887 9.58 1.553 17.462-.7 14.977-1.82M9.292 13.21s-4.362 1.036-1.544 1.412c1.189.159 3.561.123 5.77-.062 1.806-.152 3.618-.477 3.618-.477s-.637.272-1.098.587c-4.429 1.165-12.986.623-10.522-.568 2.082-1.006 3.776-.892 3.776-.892M17.116 17.584c4.503-2.34 2.421-4.589.968-4.285-.355.074-.515.138-.515.138s.132-.207.385-.297c2.875-1.011 5.086 2.981-.928 4.562 0-.001.07-.062.09-.118M14.401 0s2.494 2.494-2.365 6.33c-3.896 3.077-.888 4.832-.001 6.836-2.274-2.053-3.943-3.858-2.824-5.539 1.644-2.469 6.197-3.665 5.19-7.627M9.734 23.924c4.322.277 10.959-.153 11.116-2.198 0 0-.302.775-3.572 1.391-3.688.694-8.239.613-10.937.168 0-.001.553.457 3.393.639" />
+        </svg>
+      )
+    },
+    {
+      name: "MongoDB",
+      color: "#47A248",
+      size: 40,
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.193 9.555c-1.264-5.58-4.252-7.414-4.573-8.115-.28-.394-.53-.954-.735-1.44-.036.495-.055.685-.523 1.184-.723.566-4.438 3.682-4.74 10.02-.282 5.912 4.27 9.435 4.888 9.884l.07.05A73.49 73.49 0 0111.91 24h.481c.114-1.032.284-2.056.51-3.07.417-.296.604-.463.85-.693a11.342 11.342 0 003.639-8.464c.01-.814-.103-1.662-.197-2.218zm-5.336 8.195s0-8.291.275-8.29c.213 0 .49 10.695.49 10.695-.381-.045-.765-1.76-.765-2.405z" />
+        </svg>
+      )
+    },
+    {
+      name: "Docker",
+      color: "#2496ED",
+      size: 42,
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.186m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288Z" />
+        </svg>
+      )
+    },
+    {
+      name: "AWS",
+      color: "#FF9900",
+      size: 38,
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6.763 10.036c0 .296.032.535.088.71.064.176.144.368.256.576.04.063.056.127.056.175 0 .048-.024.104-.08.167l-.263.175c-.04.023-.08.04-.111.040-.048 0-.095-.024-.143-.08a3.85 3.85 0 01-.335-.431 8.248 8.248 0 01-.287-.504c-.719.847-1.622 1.27-2.717 1.27-.776 0-1.394-.223-1.846-.67-.457-.447-.68-1.043-.68-1.788 0-.79.279-1.43.846-1.909.566-.488 1.321-.727 2.269-.727.314 0 .638.024.988.08.35.056.71.135 1.087.24v-.79c0-.823-.168-1.398-.512-1.734-.34-.335-.92-.503-1.741-.503-.375 0-.758.048-1.158.135a8.668 8.668 0 00-1.142.36c-.168.071-.296.103-.384.103-.104 0-.151-.08-.151-.232v-.36c0-.12.016-.208.056-.272.04-.063.112-.127.207-.183.375-.191.822-.35 1.344-.47A6.435 6.435 0 017.111.758c1.19 0 2.073.272 2.652.808.583.537.863 1.35.863 2.438v3.217l.023.815zm-3.74 1.423c.303 0 .622-.056.95-.16.329-.112.616-.279.862-.51.151-.135.264-.287.329-.455.064-.167.104-.375.104-.622V9.497a7.54 7.54 0 00-.862-.183 7.594 7.594 0 00-.886-.08c-.63 0-1.094.12-1.402.367-.303.248-.454.606-.454 1.067 0 .455.151.799.454 1.035.303.231.726.351 1.27.351l.135.004zm6.95.895c-.135 0-.223-.024-.271-.08-.048-.048-.09-.16-.131-.311L7.734 5.676c-.04-.135-.064-.223-.064-.271 0-.104.048-.16.151-.16h.617c.135 0 .231.024.271.08.048.048.087.16.127.311l1.702 6.718 1.582-6.718c.032-.135.072-.263.127-.311.048-.048.15-.08.271-.08h.505c.135 0 .231.024.271.08.056.048.095.16.127.311l1.598 6.797 1.742-6.797c.04-.135.087-.263.127-.311.048-.048.15-.08.271-.08h.586c.104 0 .16.048.16.16 0 .032-.008.063-.016.103-.008.04-.024.095-.048.175l-1.894 6.286c-.04.135-.087.263-.131.311-.048.048-.15.08-.271.08h-.542c-.135 0-.231-.024-.271-.08-.056-.048-.095-.16-.127-.311l-1.566-6.51-1.55 6.51c-.032.135-.072.263-.127.311-.048.048-.15.08-.271.08h-.542zm10.296.007c-.417 0-.834-.048-1.27-.135-.432-.088-.77-.2-.998-.336-.151-.08-.255-.176-.279-.272-.032-.095-.048-.2-.048-.31v-.375c0-.151.056-.231.16-.231.04 0 .08.008.127.024.048.016.119.048.207.08.375.16.766.279 1.174.36.407.08.822.12 1.238.12.654 0 1.158-.112 1.51-.344.353-.232.527-.559.527-.976 0-.288-.087-.535-.271-.744-.183-.208-.526-.4-1.019-.583l-1.463-.46c-.742-.232-1.286-.575-1.645-.999-.36-.432-.527-.924-.527-1.478 0-.432.087-.816.271-1.15.183-.336.432-.624.758-.864.319-.24.71-.416 1.158-.528A5.31 5.31 0 0119.863 0c.183 0 .375.008.567.032.192.016.375.048.55.08.167.032.328.072.479.112.151.04.279.088.375.135.151.071.264.15.328.24.064.087.104.2.104.336v.344c0 .151-.056.232-.167.232-.056 0-.151-.024-.279-.08-.535-.24-1.142-.36-1.813-.36-.598 0-1.07.104-1.422.312-.351.209-.527.518-.527.926 0 .288.095.535.287.752.191.216.55.416 1.067.598l1.434.447c.718.223 1.242.54 1.566.95.32.407.487.871.487 1.374 0 .44-.087.838-.272 1.182-.183.352-.44.65-.767.894-.328.24-.726.424-1.198.536-.48.118-1.006.176-1.566.176z" />
+        </svg>
+      )
+    },
+    {
+      name: "Git",
+      color: "#F05032",
+      size: 38,
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.6-.401-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187" />
+        </svg>
+      )
+    }
+  ]
+
+  // Background particles data with better distribution
+  const backgroundParticles = Array.from({ length: 20 }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 6 + 3,
+    duration: Math.random() * 25 + 15,
+    delay: Math.random() * 8,
+    opacity: Math.random() * 0.3 + 0.1,
+  }))
 
   return (
     <div className="portfolio-container">
-      {/* Parallax background elements */}
-      <div className="parallax-bg">
-        <motion.div
-          className="parallax-shape shape1"
-          style={{
-            x: calculateParallax(15).x,
-            y: calculateParallax(15).y,
-          }}
-        />
-        <motion.div
-          className="parallax-shape shape2"
-          style={{
-            x: calculateParallax(25).x,
-            y: calculateParallax(25).y,
-          }}
-        />
-        <motion.div
-          className="parallax-shape shape3"
-          style={{
-            x: calculateParallax(20).x,
-            y: calculateParallax(20).y,
-          }}
-        />
-        <motion.div
-          className="parallax-shape shape4"
-          style={{
-            x: calculateParallax(30).x,
-            y: calculateParallax(30).y,
-          }}
-        />
-        <motion.div
-          className="parallax-shape shape5"
-          style={{
-            x: calculateParallax(10).x,
-            y: calculateParallax(10).y,
-          }}
-        />
-        <motion.div
-          className="parallax-shape shape6"
-          style={{
-            x: calculateParallax(35).x,
-            y: calculateParallax(35).y,
-          }}
-        />
+      {/* Custom Cursor */}
+      <motion.div
+        className="custom-cursor"
+        variants={cursorVariants}
+        animate={cursorVariant}
+        transition={{
+          type: "spring",
+          stiffness: 500,
+          damping: 28,
+        }}
+      />
 
-        {/* Floating elements */}
-        <motion.div
-          className="floating-element element1"
-          style={{
-            x: calculateParallax(8).x,
-            y: calculateParallax(8).y,
-          }}
-          animate={{
-            y: [0, -15, 0],
-            rotate: [0, 5, 0, -5, 0],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Number.POSITIVE_INFINITY,
-            repeatType: "reverse",
-          }}
-        />
-        <motion.div
-          className="floating-element element2"
-          style={{
-            x: calculateParallax(12).x,
-            y: calculateParallax(12).y,
-          }}
-          animate={{
-            y: [0, 20, 0],
-            rotate: [0, -8, 0, 8, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Number.POSITIVE_INFINITY,
-            repeatType: "reverse",
-          }}
-        />
-        <motion.div
-          className="floating-element element3"
-          style={{
-            x: calculateParallax(6).x,
-            y: calculateParallax(6).y,
-          }}
-          animate={{
-            y: [0, -25, 0],
-            rotate: [0, 10, 0, -10, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Number.POSITIVE_INFINITY,
-            repeatType: "reverse",
-          }}
-        />
+      {/* Dynamic Floating Programming Language Logos */}
+      <div className="floating-logos">
+        {floatingLogos.map((logo, index) => (
+          <motion.div
+            key={logo.name}
+            className="floating-logo"
+            style={{
+              width: `${logo.size}px`,
+              height: `${logo.size}px`,
+              color: logo.color,
+            }}
+            initial={{
+              x: logo.startX + "%",
+              y: logo.startY + "%",
+              scale: 0,
+              opacity: 0,
+            }}
+            animate={{
+              x: [
+                logo.startX + "%",
+                (logo.startX + 20 + Math.sin(index) * 30) + "%",
+                (logo.startX - 15 + Math.cos(index) * 25) + "%",
+                (logo.startX + 10 + Math.sin(index * 1.5) * 20) + "%",
+                logo.startX + "%"
+              ],
+              y: [
+                logo.startY + "%",
+                (logo.startY - 20 + Math.cos(index) * 15) + "%",
+                (logo.startY + 25 + Math.sin(index) * 20) + "%",
+                (logo.startY - 10 + Math.cos(index * 1.2) * 18) + "%",
+                logo.startY + "%"
+              ],
+              rotate: [0, 180, 360, 540, 720],
+              scale: [0.8, 1.2, 0.9, 1.1, 1],
+              opacity: [0.6, 1, 0.7, 0.9, 0.8],
+            }}
+            transition={{
+              duration: 15 + (index * 3),
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: index * 1.2,
+            }}
+            whileHover={{
+              scale: 1.4,
+              rotate: 25,
+              opacity: 1,
+              transition: { duration: 0.3 }
+            }}
+            onHoverStart={() => setCursorVariant("hover")}
+            onHoverEnd={() => setCursorVariant("default")}
+          >
+            <div className="logo-container">
+              {logo.icon}
+              <span className="logo-tooltip">{logo.name}</span>
+            </div>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Hero section */}
+      {/* Enhanced Interactive Background Particles */}
+      <div className="background-particles">
+        {backgroundParticles.map((particle) => (
+          <motion.div
+            key={particle.id}
+            className="particle"
+            style={{
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              opacity: particle.opacity,
+            }}
+            animate={{
+              y: [0, -150, 0],
+              opacity: [particle.opacity, particle.opacity * 1.5, particle.opacity],
+              scale: [0.5, 1.2, 0.5],
+              rotate: [0, 180, 360],
+              x: [
+                0,
+                Math.sin(particle.id * 0.5) * 80,
+                Math.cos(particle.id * 0.3) * 60,
+                0
+              ],
+            }}
+            transition={{
+              duration: particle.duration,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: particle.delay,
+            }}
+          />
+        ))}
+      </div>
+      {/* Navigation */}
+      <motion.nav
+        className="navbar"
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <div className="nav-container">
+          <motion.div
+            className="nav-brand"
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="brand-text">KB</span>
+          </motion.div>
+
+          <div className="nav-links">
+            {['Home', 'About', 'Skills', 'Projects', 'Contact'].map((item, index) => (
+              <motion.a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className={`nav-link ${activeSection === item.toLowerCase() ? 'active' : ''}`}
+                whileHover={{ y: -2, scale: 1.05 }}
+                onHoverStart={() => setCursorVariant("text")}
+                onHoverEnd={() => setCursorVariant("default")}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                {item}
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      </motion.nav>
+
+      {/* Hero Section */}
       <motion.section
+        id="home"
         className="hero-section"
+        ref={heroRef}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
-        ref={containerRef}
       >
-        <div className="hero-content">
-          <motion.div
-            className="hero-left"
-            style={{
-              x: calculateParallax(30).x,
-              y: calculateParallax(30).y,
-            }}
-          >
-            <div className="hero-text-container">
-              <motion.div
-                className="greeting-text"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+        <div className="hero-container">
+          <div className="hero-content">
+            <motion.div
+              className="hero-text"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <motion.span
+                className="hero-greeting"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
               >
-                <span className="hello-text">Hello, I'm</span>
-              </motion.div>
+                👋 Hello, I'm
+              </motion.span>
 
               <motion.h1
-                className="name-title"
+                className="hero-name"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
               >
                 Kishan C Bhandary
               </motion.h1>
 
-              <motion.h2
-                className="role-title"
+              <motion.div
+                className="hero-roles"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
+                transition={{ duration: 0.8, delay: 0.9 }}
               >
-                Backend Developer
-              </motion.h2>
+                <span className="role-text">Full-Stack Developer</span>
+                <span className="role-separator">•</span>
+                <span className="role-text">Backend Specialist</span>
+              </motion.div>
+
+              <motion.p
+                className="hero-description"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.1 }}
+              >
+                I craft scalable web applications and robust backend systems
+                that solve real-world problems with clean, efficient code.
+              </motion.p>
 
               <motion.div
-                className="description-container"
+                className="hero-stats"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
+                transition={{ duration: 0.8, delay: 1.3 }}
               >
-                <p className="description-text">
-                  Crafting innovative digital experiences at the intersection of human creativity and artificial intelligence.
-                </p>
+                <div className="stat-item">
+                  <span className="stat-number">3+</span>
+                  <span className="stat-label">Years Experience</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-number">50+</span>
+                  <span className="stat-label">Projects Built</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-number">∞</span>
+                  <span className="stat-label">Coffee Consumed</span>
+                </div>
               </motion.div>
 
               <motion.div
-                className="hero-credentials"
+                className="hero-actions"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.8 }}
+                transition={{ duration: 0.8, delay: 1.5 }}
               >
-                <div className="credential-item">
-                  <span className="credential-icon">🎓</span>
-                  <span className="credential-text">Information  Science Graduate</span>
-                </div>
-                <div className="credential-item">
-                  <span className="credential-icon">💼</span>
-                  <span className="credential-text">Full-Stack Developer</span>
-                </div>
+                <motion.a
+                  href="#projects"
+                  className="btn btn-primary"
+                  whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(99, 102, 241, 0.4)" }}
+                  whileTap={{ scale: 0.95 }}
+                  onHoverStart={() => setCursorVariant("hover")}
+                  onHoverEnd={() => setCursorVariant("default")}
+                >
+                  <span>View My Work</span>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </motion.a>
+
+                <motion.a
+                  href="#contact"
+                  className="btn btn-secondary"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onHoverStart={() => setCursorVariant("hover")}
+                  onHoverEnd={() => setCursorVariant("default")}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2" />
+                    <polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                  <span>Get In Touch</span>
+                </motion.a>
               </motion.div>
-            </div>
+            </motion.div>
 
             <motion.div
-              className="hero-buttons"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
+              className="hero-visual"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
             >
-              <motion.a
-                href="#projects"
-                className="btn btn-primary"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                View My Work
-              </motion.a>
-              <motion.a
-                href="#contact"
-                className="btn btn-secondary"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Contact Me
-              </motion.a>
+              <div className="visual-container">
+                <div className="code-window">
+                  <div className="window-header">
+                    <div className="window-controls">
+                      <span className="control red"></span>
+                      <span className="control yellow"></span>
+                      <span className="control green"></span>
+                    </div>
+                    <span className="window-title">portfolio.js</span>
+                  </div>
+                  <div className="code-content">
+                    <motion.div
+                      className="code-line"
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ delay: 1.8, duration: 0.8 }}
+                    >
+                      <span className="code-keyword">const</span>
+                      <span className="code-variable"> developer</span>
+                      <span className="code-operator"> = </span>
+                      <span className="code-string">"Kishan"</span>
+                    </motion.div>
+                    <motion.div
+                      className="code-line"
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ delay: 2.2, duration: 0.8 }}
+                    >
+                      <span className="code-variable">developer</span>
+                      <span className="code-operator">.</span>
+                      <span className="code-method">skills</span>
+                      <span className="code-operator">()</span>
+                    </motion.div>
+                    <motion.div
+                      className="code-line"
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ delay: 2.6, duration: 0.8 }}
+                    >
+                      <span className="code-comment">// Building amazing things ✨</span>
+                    </motion.div>
+                  </div>
+                </div>
+
+                <div className="floating-elements">
+                  {['⚛️', '🚀', '☕', '🎯'].map((emoji, index) => (
+                    <motion.div
+                      key={index}
+                      className={`floating-element element-${index + 1}`}
+                      animate={{
+                        y: [0, -20, 0],
+                        rotate: [0, 10, -10, 0],
+                      }}
+                      transition={{
+                        duration: 3 + index,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        delay: index * 0.5
+                      }}
+                    >
+                      {emoji}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
             </motion.div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="hero-right"
-            style={{
-              x: calculateParallax(-20).x,
-              y: calculateParallax(-20).y,
-            }}
-          >
-            <div className="profile-image-wrapper">
-              <motion.div
-                className="profile-image-container"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.3 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                <img src="/kishan.png" alt="Kishan Bhandary" className="profile-image" />
-              </motion.div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Scroll down indicator */}
-        {showScrollIndicator && (
           <motion.div
             className="scroll-indicator"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 0.5 }}
+            transition={{ delay: 2 }}
           >
-            <div className="arrow-container">
-              <motion.div
-                className="arrow"
-                animate={{
-                  y: [0, 20, 0],
-                  opacity: [0, 1, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "loop",
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M12 5V19M12 19L5 12M12 19L19 12"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </motion.div>
-              <motion.div
-                className="arrow arrow-2"
-                animate={{
-                  y: [0, 20, 40],
-                  opacity: [0, 0.5, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "loop",
-                  delay: 0.2,
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M12 5V19M12 19L5 12M12 19L19 12"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </motion.div>
-              <motion.div
-                className="arrow arrow-3"
-                animate={{
-                  y: [0, 20, 60],
-                  opacity: [0, 0.3, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "loop",
-                  delay: 0.4,
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M12 5V19M12 19L5 12M12 19L19 12"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </motion.div>
-            </div>
+            <motion.div
+              className="scroll-mouse"
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <div className="scroll-wheel"></div>
+            </motion.div>
+            <span>Scroll to explore</span>
           </motion.div>
-        )}
+        </div>
       </motion.section>
 
-      {/* About section */}
+      {/* About Section */}
       <motion.section
         id="about"
         className="about-section"
@@ -426,79 +579,192 @@ export default function MainContent() {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8 }}
       >
-        <div className="section-header">
-          <h2>About Me</h2>
-          <div className="section-divider"></div>
-        </div>
+        <div className="section-container">
+          <div className="section-header">
+            <motion.span
+              className="section-tag"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              About Me
+            </motion.span>
+            <motion.h2
+              className="section-title"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              Passionate about creating digital experiences
+            </motion.h2>
+          </div>
 
-        <div className="about-content">
-          <motion.div
-            className="about-text"
-            style={{
-              x: calculateParallax(50).x,
-              y: calculateParallax(50).y,
-            }}
-          >
-            <p>
-              I'm a passionate developer with expertise in creating cutting-edge applications that leverage the power of
-              artificial intelligence and modern web technologies. With over 5 years of experience in the industry, I've
-              worked on a diverse range of projects from immersive web experiences to complex AI systems.
-            </p>
+          <div className="about-content">
+            <motion.div
+              className="about-text"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+            >
+              <p className="lead-text">
+                I'm a dedicated full-stack developer with a passion for building
+                innovative web applications that make a real impact.
+              </p>
 
-            <p>
-              My approach combines technical excellence with creative problem-solving, allowing me to build solutions
-              that are not only functional but also intuitive and engaging for users.
-            </p>
+              <p>
+                With expertise spanning modern frontend frameworks like React and Next.js,
+                to robust backend technologies including Node.js, Java, and Spring Boot,
+                I bring ideas to life through clean, efficient code.
+              </p>
 
-            <div className="about-stats">
-              <div className="stat">
-                <span className="stat-number">5+</span>
-                <span className="stat-label">Years Experience</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">50+</span>
-                <span className="stat-label">Projects Completed</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">20+</span>
-                <span className="stat-label">Happy Clients</span>
-              </div>
-            </div>
-          </motion.div>
+              <p>
+                When I'm not coding, you'll find me exploring new technologies,
+                contributing to open-source projects, or enjoying a good cup of coffee
+                while planning the next big project.
+              </p>
 
-          <motion.div
-            className="skills-container"
-            style={{
-              x: calculateParallax(-50).x,
-              y: calculateParallax(-50).y,
-            }}
-          >
-            <h3>My Skills</h3>
-
-            <div className="skills-grid">
-              {skills.map((skill, index) => (
-                <div key={index} className="skill-item">
-                  <div className="skill-info">
-                    <span className="skill-name">{skill.name}</span>
-                    <span className="skill-percentage">{skill.level}%</span>
-                  </div>
-                  <div className="skill-bar">
-                    <motion.div
-                      className="skill-progress"
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${skill.level}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1, delay: index * 0.1 }}
-                    />
+              <div className="about-highlights">
+                <div className="highlight-item">
+                  <span className="highlight-icon">🎓</span>
+                  <div>
+                    <h4>Information Science Graduate</h4>
+                    <p>Strong foundation in computer science principles</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </motion.div>
+                <div className="highlight-item">
+                  <span className="highlight-icon">💡</span>
+                  <div>
+                    <h4>Problem Solver</h4>
+                    <p>Love tackling complex challenges with creative solutions</p>
+                  </div>
+                </div>
+                <div className="highlight-item">
+                  <span className="highlight-icon">🌱</span>
+                  <div>
+                    <h4>Continuous Learner</h4>
+                    <p>Always exploring new technologies and best practices</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="about-image"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+            >
+              <div className="image-container">
+                <img src="/kishan.jpeg" alt="Kishan Bhandary" />
+                <div className="image-overlay">
+                  <div className="tech-stack">
+                    {['React', 'Node.js', 'Java', 'MongoDB'].map((tech, index) => (
+                      <motion.span
+                        key={tech}
+                        className="tech-badge"
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.7 + index * 0.1 }}
+                      >
+                        {tech}
+                      </motion.span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </motion.section>
 
-      {/* Projects section */}
+      {/* Skills Section */}
+      <motion.section
+        id="skills"
+        className="skills-section"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="section-container">
+          <div className="section-header">
+            <motion.span
+              className="section-tag"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              My Skills
+            </motion.span>
+            <motion.h2
+              className="section-title"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              Technologies I work with
+            </motion.h2>
+          </div>
+
+          <div className="skills-grid">
+            {skills.map((skill, index) => (
+              <motion.div
+                key={skill.name}
+                className="skill-card"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{
+                  y: -15,
+                  scale: 1.05,
+                  rotateY: 10,
+                  boxShadow: `0 20px 40px rgba(${parseInt(skill.color?.slice(1, 3), 16)}, ${parseInt(skill.color?.slice(3, 5), 16)}, ${parseInt(skill.color?.slice(5, 7), 16)}, 0.3)`
+                }}
+                onHoverStart={() => setCursorVariant("hover")}
+                onHoverEnd={() => setCursorVariant("default")}
+              >
+                <motion.div
+                  className="skill-icon"
+                  animate={{
+                    rotate: [0, 10, -10, 0],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: index * 0.2,
+                  }}
+                  style={{ color: skill.color }}
+                >
+                  {skill.icon}
+                </motion.div>
+                <h3 className="skill-name">{skill.name}</h3>
+                <div className="skill-progress">
+                  <div className="progress-bar">
+                    <motion.div
+                      className="progress-fill"
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${skill.level}%` }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 + 0.3, duration: 1 }}
+                    />
+                  </div>
+                  <span className="skill-percentage">{skill.level}%</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Projects Section */}
       <motion.section
         id="projects"
         className="projects-section"
@@ -507,83 +773,131 @@ export default function MainContent() {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8 }}
       >
-        <div className="section-header">
-          <h2>My Projects</h2>
-          <div className="section-divider"></div>
+        <div className="section-container">
+          <div className="section-header">
+            <motion.span
+              className="section-tag"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              Portfolio
+            </motion.span>
+            <motion.h2
+              className="section-title"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              Featured Projects
+            </motion.h2>
+          </div>
+
+          {loading ? (
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Loading projects...</p>
+            </div>
+          ) : error ? (
+            <div className="error-container">
+              <p>Error loading projects: {error}</p>
+            </div>
+          ) : (
+            <div className="projects-grid">
+              {projects.map((project, index) => (
+                <motion.div
+                  key={project.id}
+                  className="project-card"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{
+                    y: -15,
+                    scale: 1.02,
+                    rotateX: 5,
+                    boxShadow: "0 25px 50px rgba(99, 102, 241, 0.3)"
+                  }}
+                  onHoverStart={() => setCursorVariant("hover")}
+                  onHoverEnd={() => setCursorVariant("default")}
+                >
+                  <div className="project-image">
+                    <img src={project.imageUrl || "/placeholder.svg"} alt={project.title} />
+                    <div className="project-overlay">
+                      <div className="project-links">
+                        <motion.a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="project-link"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="currentColor" strokeWidth="2" />
+                          </svg>
+                        </motion.a>
+                        {project.liveUrl && (
+                          <motion.a
+                            href={project.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="project-link"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" strokeWidth="2" />
+                              <polyline points="15,3 21,3 21,9" stroke="currentColor" strokeWidth="2" />
+                              <line x1="10" y1="14" x2="21" y2="3" stroke="currentColor" strokeWidth="2" />
+                            </svg>
+                          </motion.a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="project-content">
+                    <h3 className="project-title">{project.title}</h3>
+                    <p className="project-description">{project.description}</p>
+                    <div className="project-technologies">
+                      {project.technologies?.map((tech, i) => (
+                        <span key={i} className="tech-tag">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          <motion.div
+            className="projects-cta"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+          >
+            <motion.a
+              href="https://github.com/kishanBhandary"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-outline"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="currentColor" strokeWidth="2" />
+              </svg>
+              <span>View All Projects on GitHub</span>
+            </motion.a>
+          </motion.div>
         </div>
-
-        {loading ? (
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p>Loading projects...</p>
-          </div>
-        ) : error ? (
-          <div className="error-container">
-            <p>Error loading projects: {error}</p>
-          </div>
-        ) : (
-          <div className="projects-grid">
-            {projects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                className="project-card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -10 }}
-                style={{
-                  x: calculateParallax(80 + index * 10).x,
-                  y: calculateParallax(80 + index * 10).y,
-                }}
-              >
-                <div className="project-image">
-                  <img src={project.imageUrl || "/placeholder.svg"} alt={project.title} />
-                  <div className="project-overlay">
-                    <motion.a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="view-project-btn"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      View Project
-                    </motion.a>
-                  </div>
-                </div>
-                <div className="project-content">
-                  <h3>{project.title}</h3>
-                  <p>{project.description}</p>
-                  <div className="project-tags">
-                    {project.technologies?.map((tech, i) => (
-                      <span key={i} className="project-tag">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
-
-        <motion.div
-          className="view-all-container"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          style={{
-            x: calculateParallax(40).x,
-            y: calculateParallax(40).y,
-          }}
-        >
-          <a href="https://github.com/kishanBhandary" target="_blank" rel="noopener noreferrer" className="view-all-btn">
-            View All Projects
-          </a>
-        </motion.div>
       </motion.section>
 
-      {/* Contact section */}
+      {/* Contact Section */}
       <motion.section
         id="contact"
         className="contact-section"
@@ -592,95 +906,92 @@ export default function MainContent() {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8 }}
       >
-        <div className="section-header">
-          <h2>Get In Touch</h2>
-          <p className="section-subtitle">
-            Let's discuss how we can work together to bring your ideas to life
-          </p>
-          <div className="section-divider"></div>
-        </div>
+        <div className="section-container">
+          <div className="section-header">
+            <motion.span
+              className="section-tag"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              Get In Touch
+            </motion.span>
+            <motion.h2
+              className="section-title"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              Let's work together
+            </motion.h2>
+            <motion.p
+              className="section-subtitle"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+            >
+              Have a project in mind? Let's discuss how we can bring your ideas to life.
+            </motion.p>
+          </div>
 
-        <div className="contact-container">
-          <motion.div
-            className="contact-info"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <div className="contact-intro">
-              <h3>Let's Start a Conversation</h3>
-              <p>
-                I'm always excited to work on new projects and collaborate with amazing people.
-                Whether you have a question, a project idea, or just want to say hello, I'd love to hear from you.
-              </p>
-            </div>
+          <div className="contact-content">
+            <motion.div
+              className="contact-info"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="contact-methods">
+                <div className="contact-method">
+                  <div className="method-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2" />
+                      <polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2" />
+                    </svg>
+                  </div>
+                  <div className="method-details">
+                    <h4>Email</h4>
+                    <a href="mailto:kishanbhandary0@gmail.com">kishanbhandary0@gmail.com</a>
+                  </div>
+                </div>
 
-            <div className="contact-details">
-              <motion.div
-                className="contact-item"
-                whileHover={{ x: 10 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="contact-icon-wrapper">
-                  <svg className="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                    <polyline points="22,6 12,13 2,6" />
-                  </svg>
+                <div className="contact-method">
+                  <div className="method-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" strokeWidth="2" />
+                      <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" />
+                    </svg>
+                  </div>
+                  <div className="method-details">
+                    <h4>Location</h4>
+                    <span>Mangalore, India</span>
+                  </div>
                 </div>
-                <div className="contact-content">
-                  <span className="contact-label">Email</span>
-                  <a href="mailto:kishanbhandary0@gmail.com" className="contact-value">
-                    kishanbhandary0@gmail.com
-                  </a>
-                </div>
-              </motion.div>
 
-              <motion.div
-                className="contact-item"
-                whileHover={{ x: 10 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="contact-icon-wrapper">
-                  <svg className="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
+                <div className="contact-method">
+                  <div className="method-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" strokeWidth="2" />
+                    </svg>
+                  </div>
+                  <div className="method-details">
+                    <h4>Phone</h4>
+                    <a href="tel:+919164490335">+91 9164490335</a>
+                  </div>
                 </div>
-                <div className="contact-content">
-                  <span className="contact-label">Location</span>
-                  <span className="contact-value">Mangalore, India</span>
-                </div>
-              </motion.div>
+              </div>
 
-              <motion.div
-                className="contact-item"
-                whileHover={{ x: 10 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="contact-icon-wrapper">
-                  <svg className="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                </div>
-                <div className="contact-content">
-                  <span className="contact-label">Phone</span>
-                  <a href="tel:+919164490335" className="contact-value">+91 9164490335</a>
-                </div>
-              </motion.div>
-            </div>
-
-            <div className="social-section">
-              <h4>Follow Me</h4>
               <div className="social-links">
                 <motion.a
                   href="https://github.com/kishanBhandary"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="social-link github"
-                  whileHover={{ y: -8, scale: 1.1 }}
+                  className="social-link"
+                  whileHover={{ y: -5, scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  title="GitHub"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
@@ -691,10 +1002,9 @@ export default function MainContent() {
                   href="https://linkedin.com/in/kishan-bhandary"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="social-link linkedin"
-                  whileHover={{ y: -8, scale: 1.1 }}
+                  className="social-link"
+                  whileHover={{ y: -5, scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  title="LinkedIn"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
@@ -705,163 +1015,168 @@ export default function MainContent() {
                   href="https://twitter.com/kishanbhandary"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="social-link twitter"
-                  whileHover={{ y: -8, scale: 1.1 }}
+                  className="social-link"
+                  whileHover={{ y: -5, scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  title="Twitter"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                   </svg>
                 </motion.a>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
 
-          <motion.div
-            className="contact-form-container"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <div className="form-header">
-              <h3>Send Me a Message</h3>
-              <p>Fill out the form below and I'll get back to you as soon as possible.</p>
-            </div>
-
-            <form className="contact-form" onSubmit={handleSubmit}>
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="name">Full Name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Your full name"
-                    required
-                  />
+            <motion.div
+              className="contact-form-container"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6 }}
+            >
+              <form className="contact-form" onSubmit={handleSubmit}>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="name">Name</label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Your full name"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="your.email@example.com"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email">Email Address</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
+                  <label htmlFor="message">Message</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
                     onChange={handleChange}
-                    placeholder="your.email@example.com"
+                    placeholder="Tell me about your project..."
+                    rows="6"
                     required
-                  />
+                  ></textarea>
                 </div>
-              </div>
 
-              <div className="form-group">
-                <label htmlFor="message">Message</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder="Tell me about your project or just say hello..."
-                  rows="6"
-                  required
-                ></textarea>
-              </div>
-
-              {formStatus.success && (
-                <motion.div
-                  className="success-message"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  ✅ Message sent successfully! I'll get back to you soon.
-                </motion.div>
-              )}
-
-              {formStatus.error && (
-                <motion.div
-                  className="error-message"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  ❌ Error: {formStatus.error}
-                </motion.div>
-              )}
-
-              <motion.button
-                type="submit"
-                className="submit-btn"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                disabled={formStatus.loading}
-              >
-                {formStatus.loading ? (
-                  <>
-                    <div className="loading-spinner-small"></div>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="22" y1="2" x2="11" y2="13"></line>
-                      <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
-                    </svg>
-                    Send Message
-                  </>
+                {formStatus.success && (
+                  <motion.div
+                    className="form-message success"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    ✅ Message sent successfully! I'll get back to you soon.
+                  </motion.div>
                 )}
-              </motion.button>
-            </form>
-          </motion.div>
+
+                {formStatus.error && (
+                  <motion.div
+                    className="form-message error"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    ❌ Error: {formStatus.error}
+                  </motion.div>
+                )}
+
+                <motion.button
+                  type="submit"
+                  className="btn btn-primary submit-btn"
+                  disabled={formStatus.loading}
+                  whileHover={{ scale: formStatus.loading ? 1 : 1.02 }}
+                  whileTap={{ scale: formStatus.loading ? 1 : 0.98 }}
+                >
+                  {formStatus.loading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" strokeWidth="2" />
+                        <polygon points="22,2 15,22 11,13 2,9 22,2" stroke="currentColor" strokeWidth="2" />
+                      </svg>
+                    </>
+                  )}
+                </motion.button>
+              </form>
+            </motion.div>
+          </div>
         </div>
       </motion.section>
 
       {/* Footer */}
       <footer className="footer">
-        <div className="footer-content">
-          <p>© 2025 Kishan Bhandary. All Rights Reserved.</p>
-          <p>Designed & Built with ❤️</p>
+        <div className="footer-container">
+          <div className="footer-content">
+            <motion.div
+              className="footer-brand"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h3>Kishan Bhandary</h3>
+              <p>Full-Stack Developer passionate about creating amazing digital experiences.</p>
+            </motion.div>
+
+            <motion.div
+              className="footer-links"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                  <li><a href="#home">Home</a></li>
+                  <li><a href="#about">About</a></li>
+                  <li><a href="#skills">Skills</a></li>
+                  <li><a href="#projects">Projects</a></li>
+                  <li><a href="#contact">Contact</a></li>
+                </ul>
+              </div>
+
+              <div className="footer-section">
+                <h4>Connect</h4>
+                <ul>
+                  <li><a href="https://github.com/kishanBhandary" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                  <li><a href="https://linkedin.com/in/kishan-bhandary" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+                  <li><a href="mailto:kishanbhandary0@gmail.com">Email</a></li>
+                </ul>
+              </div>
+            </motion.div>
+          </div>
+
+          <motion.div
+            className="footer-bottom"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+          >
+            <p>&copy; 2025 Kishan Bhandary. All rights reserved.</p>
+            <p>Designed & Built with ❤️ and lots of ☕</p>
+          </motion.div>
         </div>
       </footer>
-
-      {/* Mouse follower */}
-      <motion.div
-        className="mouse-follower"
-        style={{
-          x: mousePosition.x - 15,
-          y: mousePosition.y - 15,
-        }}
-        animate={{
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          scale: {
-            duration: 1,
-            repeat: Number.POSITIVE_INFINITY,
-            repeatType: "reverse",
-          },
-        }}
-      />
-      <motion.div
-        className="mouse-follower-trail"
-        style={{
-          x: mousePosition.x - 25,
-          y: mousePosition.y - 25,
-          opacity: 0.3,
-        }}
-        transition={{
-          default: {
-            duration: 0.3,
-            ease: "linear",
-          },
-        }}
-      />
     </div>
   )
 }
-

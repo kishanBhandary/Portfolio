@@ -21,11 +21,11 @@ public class ProjectService {
         return projectRepository.save(project);
     }
     
-    /**
-     * Get all projects
+        /**
+     * Get all projects ordered by creation date
      */
     public List<Project> getAllProjects() {
-        return projectRepository.findAllOrderByCreatedAtDesc();
+        return projectRepository.findAllByOrderByCreatedAtDesc();
     }
     
     /**
