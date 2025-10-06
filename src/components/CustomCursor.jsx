@@ -9,8 +9,8 @@ export default function CustomCursor() {
   const cursorX = useMotionValue(0)
   const cursorY = useMotionValue(0)
 
-  // Use spring for smoother motion
-  const springConfig = { damping: 25, stiffness: 300 }
+  // Use spring for smoother motion - optimized for performance
+  const springConfig = { damping: 20, stiffness: 200, mass: 0.5 }
   const cursorXSpring = useSpring(cursorX, springConfig)
   const cursorYSpring = useSpring(cursorY, springConfig)
 
@@ -78,7 +78,7 @@ export default function CustomCursor() {
 
   return (
     <div className={`cursor-container ${isVisible ? "visible" : "hidden"}`}>
-      {/* Main cursor */}
+      {/* Main cursor - optimized for performance */}
       <motion.div
         className="cursor"
         style={{
@@ -91,36 +91,6 @@ export default function CustomCursor() {
         <div className="cursor-ring"></div>
         <div className="cursor-dot"></div>
       </motion.div>
-
-      {/* Simplified cursor trail - only 5 elements for better performance */}
-      {Array.from({ length: 5 }).map((_, index) => (
-        <motion.div
-          key={index}
-          className="cursor-trail"
-          style={{
-            x: cursorXSpring,
-            y: cursorYSpring,
-            opacity: 0.7 - index * 0.15,
-            scale: 0.8 - index * 0.15,
-            filter: `blur(${index * 0.5}px)`,
-            transition: `all ${index * 0.05 + 0.05}s linear`,
-          }}
-        />
-      ))}
-
-      {/* Click effect */}
-      {isClicking && (
-        <motion.div
-          className="click-effect"
-          initial={{ scale: 0.5, opacity: 1 }}
-          animate={{ scale: 2, opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          style={{
-            left: cursorX.get(),
-            top: cursorY.get(),
-          }}
-        />
-      )}
     </div>
   )
 }
