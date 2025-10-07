@@ -6,6 +6,7 @@ import BackgroundMusic from "./components/BackgroundMusic"
 import MainContent from "./components/MainContent"
 import TransitionAnimation from "./components/TransitionAnimation"
 import CustomCursor from "./components/CustomCursor"
+import DarkModeToggle from "./components/DarkModeToggle"
 
 function App() {
   const [introComplete, setIntroComplete] = useState(false)
@@ -46,7 +47,12 @@ function App() {
     <>
       <CustomCursor />
 
-      <main className="flex min-h-screen flex-col items-center justify-center bg-black" onClick={handleUserInteraction}>
+      {/* Dark mode toggle (top-right) */}
+      <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 9999 }}>
+        <DarkModeToggle />
+      </div>
+
+      <main className="flex min-h-screen flex-col items-center justify-center" onClick={handleUserInteraction}>
         {!introComplete && <NetflixIntro name="KISHAN" onComplete={handleIntroComplete} />}
 
         {showTransition && <TransitionAnimation onComplete={handleTransitionComplete} />}
@@ -62,7 +68,7 @@ function App() {
         )}
 
         {!userInteracted && (
-          <div className="fixed bottom-4 left-0 right-0 text-center text-white bg-black/80 p-2 rounded-md mx-auto max-w-xs z-50">
+          <div className="fixed bottom-4 left-0 right-0 text-center p-2 rounded-md mx-auto max-w-xs z-50" style={{ background: 'rgba(0,0,0,0.6)', color: 'var(--text-primary)' }}>
             <button>
               Click anywhere to enable sound
             </button>
