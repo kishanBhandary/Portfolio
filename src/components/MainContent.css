@@ -427,7 +427,7 @@ button:hover,
 
 .btn-primary {
   background: var(--gradient-primary);
-  color: white;
+  color: var(--text-primary);
   box-shadow: var(--shadow-md);
 }
 
@@ -919,7 +919,7 @@ button:hover,
 .tech-badge {
   padding: 0.25rem 0.75rem;
   background: var(--gradient-primary);
-  color: white;
+  color: var(--text-primary);
   font-size: 0.8rem;
   font-weight: 500;
   border-radius: var(--radius-md);
@@ -1129,7 +1129,7 @@ button:hover,
 .project-link:hover {
   background: var(--primary);
   border-color: var(--primary);
-  color: white;
+  color: var(--text-primary);
 }
 
 .project-content {
@@ -1220,7 +1220,7 @@ button:hover,
 }
 
 .method-icon svg {
-  color: white;
+  color: var(--text-primary);
 }
 
 .method-details h4 {
@@ -1270,7 +1270,7 @@ button:hover,
 .social-link:hover {
   background: var(--primary);
   border-color: var(--primary);
-  color: white;
+  color: var(--text-primary);
 }
 
 .social-link svg {
@@ -1543,3 +1543,43 @@ button:hover,
     grid-template-columns: 1fr;
   }
 }
+
+/* Light theme overrides when dark class is NOT present on html */
+html:not(.dark) {
+  --primary: #7c3aed;
+  --primary-dark: #6d28d9;
+  --secondary: #0ea5e9;
+  --accent: #06b6d4;
+  --accent-pink: #db2777;
+  --accent-purple: #7c3aed;
+  --accent-blue: #3b82f6;
+  --success: #059669;
+  --warning: #d97706;
+  --error: #dc2626;
+
+  --background: #ffffff;
+  --surface: #f8fafc;
+  --surface-light: #ffffff;
+  --surface-lighter: #f1f5f9;
+  --border: #e6e9ef;
+  --border-light: #d1d5db;
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-tertiary: #475569;
+  --text-muted: #6b7280;
+}
+
+/* When html has .dark class, ensure dark variables are used explicitly (redundant but explicit)
+   The default :root is already dark-themed so this is mainly for clarity. */
+html.dark {
+  --background: #0f0f0f;
+  --surface: #1a1a1a;
+  --text-primary: #ffffff;
+}
+
+/* Replace hardcoded white colors with theme variables for dark/light switching */
+
+/* Example replacements (the editor will update occurrences in-place): */
+/* color: white; -> color: var(--text-primary); */
+/* color: white !important; -> color: var(--text-primary) !important; */

@@ -7,14 +7,20 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #000000;
+  /* defer actual colors to component CSS variables; provide sensible fallbacks */
+  color-scheme: light;
+  color: var(--text-primary, #0f172a);
+  background-color: var(--background, #ffffff);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* When dark class present, let browsers use dark color-scheme */
+html.dark {
+  color-scheme: dark;
 }
 
 body {
@@ -23,10 +29,11 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--background, #000000);
+  color: var(--text-primary, #ffffff);
 }
 
 #root {
   width: 100%;
   height: 100vh;
 }
-

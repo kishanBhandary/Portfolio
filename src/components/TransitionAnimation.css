@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: black;
+  background-color: var(--background);
   z-index: 100;
   overflow: hidden;
   perspective: 1000px;
@@ -95,7 +95,7 @@
   font-family: "Montserrat", sans-serif;
   font-size: 3rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   text-shadow: 2px 2px #ff3366, -2px -2px #6c63ff;
   letter-spacing: 10px;
   animation: glitch 1s infinite alternate;
@@ -106,16 +106,20 @@
     text-shadow: 2px 0 #ff3366, -2px 0 #6c63ff;
     transform: translate(0);
   }
+
   25% {
     text-shadow: -2px 0 #ff3366, 2px 0 #6c63ff;
   }
+
   50% {
     text-shadow: 2px -2px #ff3366, -2px 2px #6c63ff;
     transform: translate(2px, 2px);
   }
+
   75% {
     text-shadow: -2px 2px #ff3366, 2px -2px #6c63ff;
   }
+
   100% {
     text-shadow: 2px 2px #ff3366, -2px -2px #6c63ff;
     transform: translate(-2px, -2px);
@@ -132,4 +136,3 @@
   background: radial-gradient(circle, transparent 30%, rgba(0, 0, 0, 0.8) 100%);
   pointer-events: none;
 }
-
