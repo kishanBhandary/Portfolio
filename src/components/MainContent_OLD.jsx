@@ -162,7 +162,7 @@ export default function MainContent() {
                 transition={{ duration: 0.8, delay: 1.1 }}
               >
                 I craft scalable web applications and robust backend systems 
-                that solve real-world problems with clean, efficient code.
+                which solves real-world problems with clean, efficient code.
               </motion.p>
               
               <motion.div 
@@ -197,7 +197,7 @@ export default function MainContent() {
                   whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(99, 102, 241, 0.4)" }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <span>View My Work</span>
+                  <span>Check My Work</span>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -213,7 +213,7 @@ export default function MainContent() {
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2"/>
                     <polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="2"/>
                   </svg>
-                  <span>Get In Touch</span>
+                  <span>Get in Touch</span>
                 </motion.a>
               </motion.div>
             </motion.div>
