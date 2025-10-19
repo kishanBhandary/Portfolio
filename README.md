@@ -253,6 +253,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Spring Boot community for excellent documentation
 - React community for best practices
 
+## Motivation 
+   "A long descriptive name is better than a short enigmatic name. A long descriptive name is better than a long descriptive comment.”
+
 ## 📧 Contact
 
 - **Email**: kishan@example.com
