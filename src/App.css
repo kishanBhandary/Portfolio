@@ -6,8 +6,9 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: black;
-  color: white;
+  background: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
 }
 
 .name-animation span {
@@ -16,36 +17,58 @@
   font-weight: bold;
   color: red;
   opacity: 0;
-  transform: translateY(-20px);
-  animation:ease-in-out;
+  display: inline-block;
+  animation: fadeInUp 0.6s forwards;
 }
 
+.name-animation span:nth-child(1) { animation-delay: 0s; }
+.name-animation span:nth-child(2) { animation-delay: 0.1s; }
+.name-animation span:nth-child(3) { animation-delay: 0.2s; }
+/* Add more delays depending on number of letters */
+
 @keyframes fadeInUp {
-  from {
+  0% {
     opacity: 0;
     transform: translateY(-20px);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
 .login-form {
-  margin-top: 20px;
+  margin-top: 30px;
   display: flex;
   flex-direction: column;
+  width: 300px;
 }
 
 .login-form input, .login-form button {
-  padding: 10px;
-  margin: 5px;
+  padding: 12px;
+  margin: 8px 0;
   font-size: 16px;
+  border-radius: 5px;
+  border: none;
+}
+
+.login-form input {
+  background: #222;
+  color: #fff;
+}
+
+.login-form input::placeholder {
+  color: #aaa;
 }
 
 .login-form button {
   background: red;
-  color: white;
-  border: none;
+  color: #fff;
+  font-weight: bold;
   cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-form button:hover {
+  background: darkred;
 }
